@@ -32,10 +32,6 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="TimelineSection" class="timeline-section">
-            <ui:Label text="Timeline (9:00 - 21:00)" name="TimelineHeader" class="timeline-header" />
-            <ui:VisualElement name="TimelineContainer" class="timeline-container" />
-        </ui:VisualElement>
         <ui:VisualElement name="StatusSection" class="status-section">
             <ui:Label text="●" name="StatusIndicator" class="status-indicator disconnected" />
             <ui:Label text="Waiting for data..." name="StatusText" class="status-text" />

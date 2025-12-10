@@ -1,11 +1,13 @@
 .room-info-panel {
-    width: 400px;
-    height: 600px;
-    background-color: rgb(30, 30, 30);
+    position: absolute;
+    width: 450px;
+    max-height: 90%;
+    background-color: rgba(30, 30, 30, 0.95);
     border-radius: 10px;
     padding: 20px;
     border-width: 2px;
     border-color: rgb(60, 60, 60);
+    overflow: hidden;
 }
 
 /* Header */
@@ -67,7 +69,7 @@
 .booking-section {
     margin-bottom: 15px;
     padding: 15px;
-    background-color: rgb(40, 40, 40);
+    background-color: rgba(40, 40, 40, 0.9);
     border-radius: 5px;
 }
 
@@ -81,7 +83,7 @@
 /* Percentage Display */
 .percentage-section {
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .booking-percentage {
@@ -146,44 +148,6 @@
 .legend-label {
     font-size: 11px;
     color: rgb(180, 180, 180);
-}
-
-/* Timeline Section */
-.timeline-section {
-    margin-bottom: 15px;
-    padding: 15px;
-    background-color: rgb(40, 40, 40);
-    border-radius: 5px;
-}
-
-.timeline-header {
-    font-size: 14px;
-    -unity-font-style: bold;
-    color: rgb(200, 200, 200);
-    margin-bottom: 10px;
-}
-
-.timeline-container {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-}
-
-.timeline-slot {
-    width: 12px;
-    height: 30px;
-    margin: 2px;
-    border-radius: 2px;
-    background-color: rgb(80, 80, 80);
-    transition-duration: 0.3s;
-}
-
-.timeline-slot.booked {
-    background-color: rgb(255, 50, 50);
-}
-
-.timeline-slot.free {
-    background-color: rgb(50, 255, 50);
 }
 
 /* Status Section */

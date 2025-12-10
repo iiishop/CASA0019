@@ -13,7 +13,7 @@ public class NeoPixelRingController : MonoBehaviour
     [Header("NeoPixel Ring Configuration")]
     [SerializeField] private int ledCount = 24;
     [SerializeField] private float ringRadius = 1.0f;
-    [SerializeField] private float lightIntensity = 2.0f;
+    [SerializeField] private float lightIntensity = 100.0f;
     [SerializeField] private float lightRange = 0.5f;
 
     [Header("MQTT Manager Reference")]
@@ -402,9 +402,16 @@ public class NeoPixelRingController : MonoBehaviour
 
             hasTimelineData = true;
 
-            // Always render timeline data when received, regardless of current mode
-            Debug.Log($"[PARSE] Timeline mode is: {timelineMode}, calling RenderTimeline()...");
-            RenderTimeline();
+            // Only render timeline if in bookings mode
+            if (timelineMode)
+            {
+                Debug.Log($"[PARSE] In bookings mode, calling RenderTimeline()...");
+                RenderTimeline();
+            }
+            else
+            {
+                Debug.Log($"[PARSE] In condition mode, storing timeline data but not rendering");
+            }
         }
         catch (Exception ex)
         {
