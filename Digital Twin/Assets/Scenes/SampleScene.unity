@@ -473,7 +473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc8078dea423708499e1f2c775f8de06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stepsPerRotation: 24
+  stepsPerRotation: 20
   rotationSpeed: 360
   pressDuration: 0.2
   pressDepth: 0.05

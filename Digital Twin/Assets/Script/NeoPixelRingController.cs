@@ -29,6 +29,9 @@ public class NeoPixelRingController : MonoBehaviour
     [Header("Display Mode")]
     [SerializeField] private bool timelineMode = true; // true = Bookings, false = Condition
 
+    // LED Physical Offset (9 o'clock = LED 20)
+    private const int LED_PHYSICAL_OFFSET = 20;
+
     // Point lights array
     private Light[] pointLights;
     private GameObject[] lightObjects;
@@ -233,6 +236,21 @@ public class NeoPixelRingController : MonoBehaviour
         Debug.Log($"[MQTT PROCESS] Message Length: {message.Length} chars");
         Debug.Log($"[MQTT PROCESS] Message: {message}");
 
+        // Ignore encoder messages - they are handled by RotaryEncoderController and TFTDisplayController
+        if (topic.Contains("encoder"))
+        {
+            Debug.Log("[MQTT] Ignoring encoder message (handled by other controllers)");
+            return;
+        }
+
+        // Handle room change message
+        if (topic.EndsWith("/current"))
+        {
+            Debug.Log("[MQTT] Processing ROOM CHANGE message");
+            ParseRoomChangeMessage(message);
+            return;
+        }
+
         // Parse JSON message
         if (topic.EndsWith("/timeline"))
         {
@@ -351,6 +369,46 @@ public class NeoPixelRingController : MonoBehaviour
     }
 
     /// <summary>
+    /// Parse room change message from MQTT
+    /// </summary>
+    void ParseRoomChangeMessage(string message)
+    {
+        Debug.Log("[ROOM] Starting to parse room change message...");
+
+        try
+        {
+            string newRoomId = ExtractStringValue(message, "current_room");
+            
+            if (string.IsNullOrEmpty(newRoomId))
+            {
+                Debug.LogWarning("[ROOM] No room ID found in message");
+                return;
+            }
+
+            if (newRoomId == currentRoomId)
+            {
+                Debug.Log($"[ROOM] Already displaying room {currentRoomId}, no change needed");
+                return;
+            }
+
+            Debug.Log($"[ROOM] 🔄 Switching from room {currentRoomId} to {newRoomId}");
+            currentRoomId = newRoomId;
+
+            // Clear current data and lights
+            hasTimelineData = false;
+            hasStatusData = false;
+            ClearAllLights();
+
+            Debug.Log($"[ROOM] ✓ Now displaying room {currentRoomId}");
+            Debug.Log($"[ROOM] Waiting for new timeline/status data for room {currentRoomId}...");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[ROOM] Error parsing room change message: {e.Message}");
+        }
+    }
+
+    /// <summary>
     /// Extract float value from JSON string (simple parser)
     /// </summary>
     float ExtractFloatValue(string json, string key)
@@ -379,11 +437,20 @@ public class NeoPixelRingController : MonoBehaviour
     /// </summary>
     string ExtractStringValue(string json, string key)
     {
-        string searchKey = $"\"{key}\":\"";
+        // Try with space after colon first
+        string searchKey = $"\"{key}\": \"";
         int startIndex = json.IndexOf(searchKey);
+
+        // If not found, try without space
         if (startIndex == -1)
         {
-            Debug.LogWarning($"[PARSE] Key '{key}' not found in JSON");
+            searchKey = $"\"{key}\":\"";
+            startIndex = json.IndexOf(searchKey);
+        }
+
+        if (startIndex == -1)
+        {
+            Debug.LogWarning($"[PARSE] Key '{key}' not found in JSON: {json.Substring(0, Math.Min(100, json.Length))}...");
             return "";
         }
 
@@ -402,6 +469,15 @@ public class NeoPixelRingController : MonoBehaviour
     }
 
     /// <summary>
+    /// Map logical LED index to physical LED position
+    /// Logical index 0 (9:00) -> Physical LED 20
+    /// </summary>
+    int MapLEDIndex(int logicalIndex)
+    {
+        return (logicalIndex + LED_PHYSICAL_OFFSET) % ledCount;
+    }
+
+    /// <summary>
     /// Render timeline mode (bookings visualization)
     /// </summary>
     void RenderTimeline()
@@ -415,22 +491,25 @@ public class NeoPixelRingController : MonoBehaviour
         {
             if (i < slotBooked.Length)
             {
+                int physicalLED = MapLEDIndex(i); // Apply physical offset
+
                 // Red = booked, Green = free
                 Color ledColor = slotBooked[i] ? Color.red : Color.green;
-                pointLights[i].color = ledColor;
-                pointLights[i].intensity = lightIntensity;
+                pointLights[physicalLED].color = ledColor;
+                pointLights[physicalLED].intensity = lightIntensity;
 
                 if (slotBooked[i]) bookedCount++;
                 else freeCount++;
 
                 if (i < 3) // Log first 3 LEDs for debugging
                 {
-                    Debug.Log($"[RENDER] LED {i}: Color={ledColor}, Intensity={lightIntensity}, Booked={slotBooked[i]}");
+                    Debug.Log($"[RENDER] Logical LED {i} -> Physical LED {physicalLED}: Color={ledColor}, Intensity={lightIntensity}, Booked={slotBooked[i]}");
                 }
             }
             else
             {
-                pointLights[i].intensity = 0f;
+                int physicalLED = MapLEDIndex(i);
+                pointLights[physicalLED].intensity = 0f;
             }
         }
 
@@ -505,8 +584,9 @@ public class NeoPixelRingController : MonoBehaviour
 
             if (currentLEDCount < targetLEDCount)
             {
-                pointLights[currentLEDCount].color = GetAttrColor(currentAttr);
-                pointLights[currentLEDCount].intensity = lightIntensity;
+                int physicalLED = MapLEDIndex(currentLEDCount); // Apply physical offset
+                pointLights[physicalLED].color = GetAttrColor(currentAttr);
+                pointLights[physicalLED].intensity = lightIntensity;
                 currentLEDCount++;
             }
         }

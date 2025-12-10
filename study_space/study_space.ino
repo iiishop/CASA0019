@@ -220,6 +220,16 @@ void connectWiFi()
 // --------------------------------------------------
 // NEOPIXEL HELPERS
 // --------------------------------------------------
+// LED position offset correction:
+// Physical ring starts at 11 o'clock (LED 0)
+// Logical timeline starts at 9 o'clock
+// Need to shift back 4 positions: (index + 20) % 24
+int mapLEDIndex(int logicalIndex)
+{
+  // Shift by 20 (which is 24-4) to move 9 o'clock position to LED 0
+  return (logicalIndex + 20) % LED_COUNT;
+}
+
 void clearStrip()
 {
   for (int i = 0; i < LED_COUNT; i++)
@@ -258,7 +268,9 @@ void renderTimeline(int idx)
                      ? strip.Color(255, 0, 0, 0)  // red = booked
                      : strip.Color(0, 255, 0, 0); // green = free
 
-    strip.setPixelColor(i, c);
+    // Map logical time slot to physical LED position
+    int physicalLED = mapLEDIndex(i);
+    strip.setPixelColor(physicalLED, c);
     strip.show();
     delay(60);
   }
@@ -334,7 +346,9 @@ void updateStatusAnimation()
     lastAnimStep = now;
     if (currentLEDCount < targetLEDCount)
     {
-      strip.setPixelColor(currentLEDCount, attrColor(currentAttr));
+      // Map logical position to physical LED
+      int physicalLED = mapLEDIndex(currentLEDCount);
+      strip.setPixelColor(physicalLED, attrColor(currentAttr));
       strip.show();
       currentLEDCount++;
     }
@@ -804,11 +818,22 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
 
   bool isTimeline = doc.containsKey("timeline");
   bool isStatus = doc.containsKey("state");
+  bool isEncoderButton = doc.containsKey("encoder") && doc["encoder"] == "button";
 
   Serial.print("isTimeline=");
   Serial.print(isTimeline);
   Serial.print(" isStatus=");
-  Serial.println(isStatus);
+  Serial.print(isStatus);
+  Serial.print(" isEncoderButton=");
+  Serial.println(isEncoderButton);
+
+  // --- HANDLE ENCODER BUTTON (MODE TOGGLE) ---
+  if (isEncoderButton && doc["pressed"] == true)
+  {
+    Serial.println("[MQTT] 🎮 Encoder button pressed via MQTT - toggling mode");
+    toggleMode();
+    return; // Early return, no room processing needed
+  }
 
   // Determine room id
   String rid;
@@ -926,11 +951,17 @@ void connectMQTT()
       String statusTopic = String(MQTT_BASE) + "/+/status";
       mqttClient.subscribe(statusTopic.c_str());
 
+      // Encoder topic for button/rotation sync
+      String encoderTopic = "student/CASA0019/Gilang/encoder";
+      mqttClient.subscribe(encoderTopic.c_str());
+
       Serial.print("Subscribed → ");
       Serial.println(timelineTopic);
       Serial.print("Subscribed → ");
       Serial.println(statusTopic);
-      Serial.println("[ENCODER] Ready to publish to student/CASA0019/Gilang/encoder");
+      Serial.print("Subscribed → ");
+      Serial.println(encoderTopic);
+      Serial.println("[ENCODER] Ready for bidirectional MQTT sync");
     }
     else
     {
@@ -972,6 +1003,12 @@ void setup()
   connectWiFi();
   connectMQTT();
 
+  // Publish initial room state for Unity
+  String roomPayload = "{\"current_room\":\"" + String(ROOM_IDS[selectedRoom]) + "\"}";
+  mqttClient.publish("student/CASA0019/Gilang/studyspace/current", roomPayload.c_str());
+  Serial.print("[ROOM] Published initial room: ");
+  Serial.println(ROOM_IDS[selectedRoom]);
+
   // Initial screen (Bookings mode)
   showRoomDetails(selectedRoom);
 }
@@ -1005,6 +1042,12 @@ void loop()
         String payload = "{\"encoder\":\"rotation\",\"direction\":\"cw\"}";
         mqttClient.publish("student/CASA0019/Gilang/encoder", payload.c_str());
         Serial.println("[ENCODER] Published: CW rotation");
+
+        // Publish current room change
+        String roomPayload = "{\"current_room\":\"" + String(ROOM_IDS[selectedRoom]) + "\"}";
+        mqttClient.publish("student/CASA0019/Gilang/studyspace/current", roomPayload.c_str());
+        Serial.print("[ROOM] Published current room: ");
+        Serial.println(ROOM_IDS[selectedRoom]);
       }
       else
       {
@@ -1016,6 +1059,12 @@ void loop()
         String payload = "{\"encoder\":\"rotation\",\"direction\":\"ccw\"}";
         mqttClient.publish("student/CASA0019/Gilang/encoder", payload.c_str());
         Serial.println("[ENCODER] Published: CCW rotation");
+
+        // Publish current room change
+        String roomPayload = "{\"current_room\":\"" + String(ROOM_IDS[selectedRoom]) + "\"}";
+        mqttClient.publish("student/CASA0019/Gilang/studyspace/current", roomPayload.c_str());
+        Serial.print("[ROOM] Published current room: ");
+        Serial.println(ROOM_IDS[selectedRoom]);
       }
 
       Serial.print("Room → ");
@@ -1054,7 +1103,7 @@ void loop()
     lastClk = currentClk;
   }
 
-  // --- ROTARY BUTTON (MODE SWITCH) ---
+  // --- ROTARY BUTTON (PUBLISH MQTT ONLY) ---
   bool b = digitalRead(ENC_SW);
   if (b != lastButton && (millis() - lastButtonTime > BUTTON_DEBOUNCE))
   {
@@ -1062,12 +1111,13 @@ void loop()
     lastButton = b;
     if (b == LOW)
     {
-      // Publish MQTT event for button press
+      // Publish MQTT event for button press (don't toggle mode directly)
       String payload = "{\"encoder\":\"button\",\"pressed\":true}";
       mqttClient.publish("student/CASA0019/Gilang/encoder", payload.c_str());
       Serial.println("[ENCODER] Published: Button pressed");
 
-      toggleMode();
+      // NOTE: Mode toggle now happens via MQTT callback
+      // This allows Unity virtual button to trigger Arduino display mode change
     }
   }
 

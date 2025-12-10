@@ -156,15 +156,29 @@ public class RotaryEncoderController : MonoBehaviour
 
     void HandleKeyboardInput()
     {
-        // Q: Counter-Clockwise
+        // Q - Counter-Clockwise
         if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
         {
+            // Publish MQTT for CCW rotation
+            if (mqttManager != null && mqttManager.isConnected)
+            {
+                mqttManager.topicPublish = "student/CASA0019/Gilang/encoder";
+                mqttManager.messagePublish = "{\"encoder\":\"rotation\",\"direction\":\"ccw\"}";
+                mqttManager.Publish();
+            }
             RotateCounterClockwise();
         }
 
-        // E: Clockwise
+        // E - Clockwise
         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
+            // Publish MQTT for CW rotation
+            if (mqttManager != null && mqttManager.isConnected)
+            {
+                mqttManager.topicPublish = "student/CASA0019/Gilang/encoder";
+                mqttManager.messagePublish = "{\"encoder\":\"rotation\",\"direction\":\"cw\"}";
+                mqttManager.Publish();
+            }
             RotateClockwise();
         }
 
@@ -212,7 +226,7 @@ public class RotaryEncoderController : MonoBehaviour
     }
 
     /// <summary>
-    /// Press the encoder button (trigger animation)
+    /// Press the encoder button (trigger animation and publish MQTT)
     /// </summary>
     public void PressButton()
     {
@@ -221,7 +235,20 @@ public class RotaryEncoderController : MonoBehaviour
             isPressed = true;
             pressTimer = 0f;
 
-            Debug.Log($"[RotaryEncoder] Button PRESSED");
+            Debug.Log($"[RotaryEncoder] 🔘 Button PRESSED - Publishing MQTT");
+
+            // Publish MQTT message for mode toggle
+            if (mqttManager != null && mqttManager.isConnected)
+            {
+                mqttManager.topicPublish = "student/CASA0019/Gilang/encoder";
+                mqttManager.messagePublish = "{\"encoder\":\"button\",\"pressed\":true}";
+                mqttManager.Publish();
+                Debug.Log($"[RotaryEncoder] 📤 Published button press to MQTT");
+            }
+            else
+            {
+                Debug.LogWarning($"[RotaryEncoder] ⚠️ MQTT not connected, button press not published");
+            }
 
             OnButtonPress?.Invoke();
         }
