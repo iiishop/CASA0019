@@ -27,11 +27,16 @@
 // --------------------------------------------------
 // TFT ST7735
 // --------------------------------------------------
-#define TFT_CS   5
-#define TFT_DC   7
-#define TFT_RST  6
+#define TFT_CS 5
+#define TFT_DC 7
+#define TFT_RST 6
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+
+// Screen margins to avoid dead pixels
+const int LEFT_MARGIN = 5;                                 // Left margin to avoid vertical dead line
+const int RIGHT_MARGIN = 5;                                // Right margin for symmetry
+const int USABLE_WIDTH = 128 - LEFT_MARGIN - RIGHT_MARGIN; // 118 pixels
 
 const int CX = 64;
 const int CY = 70;
@@ -40,7 +45,7 @@ const int CY = 70;
 // NEOPIXEL RING (24x SK6812 RGBW)
 // --------------------------------------------------
 #define NEOPIXEL_PIN 1
-#define LED_COUNT    24
+#define LED_COUNT 24
 
 // Ring is GRBW
 Adafruit_NeoPixel strip(LED_COUNT, NEOPIXEL_PIN, NEO_GRBW + NEO_KHZ800);
@@ -49,11 +54,11 @@ Adafruit_NeoPixel strip(LED_COUNT, NEOPIXEL_PIN, NEO_GRBW + NEO_KHZ800);
 // ROTARY ENCODER PINS
 // --------------------------------------------------
 #define ENC_CLK 2
-#define ENC_DT  3
-#define ENC_SW  4
+#define ENC_DT 3
+#define ENC_SW 4
 
-int  lastClk     = HIGH;
-bool lastButton  = HIGH;
+int lastClk = HIGH;
+bool lastButton = HIGH;
 unsigned long lastButtonTime = 0;
 const unsigned long BUTTON_DEBOUNCE = 180;
 
@@ -61,9 +66,7 @@ const unsigned long BUTTON_DEBOUNCE = 180;
 // WIFI + MQTT
 // --------------------------------------------------
 
-// WiFi credentials + MQTT_* come from arduino_secrets.h
-
-const char* MQTT_BASE = "student/CASA0019/Gilang/studyspace";
+// WiFi credentials + MQTT_* (including MQTT_BASE) come from arduino_secrets.h
 
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
@@ -73,68 +76,66 @@ PubSubClient mqttClient(wifiClient);
 // --------------------------------------------------
 const uint8_t ROOM_COUNT = 5;
 
-const char* ROOM_IDS[ROOM_COUNT] = {
-  "24380",
-  "24381",
-  "24382",
-  "24546",
-  "24547"
-};
+const char *ROOM_IDS[ROOM_COUNT] = {
+    "24380",
+    "24381",
+    "24382",
+    "24546",
+    "24547"};
 
-const char* ROOM_NAMES[ROOM_COUNT] = {
-  "Pod 216",
-  "Pod 217",
-  "Group 218",
-  "Pod 212A",
-  "Pod 212B"
-};
+const char *ROOM_NAMES[ROOM_COUNT] = {
+    "Pod 216",
+    "Pod 217",
+    "Group 218",
+    "Pod 212A",
+    "Pod 212B"};
 
-const char* ROOM_DETAILS[ROOM_COUNT] = {
-  "Single Study Pod 216\n"
-  "Capacity: 1\n"
-  "Facilities: Plug, PC,\nheight adj. desk\n"
-  "Building: UCL East\nLibrary 2nd Floor\n"
-  "Features:\nLaptop charging\nEnclosed pod",
+const char *ROOM_DETAILS[ROOM_COUNT] = {
+    "Single Study Pod 216\n"
+    "Capacity: 1\n"
+    "Facilities: Plug, PC,\nheight adj. desk\n"
+    "Building: UCL East\nLibrary 2nd Floor\n"
+    "Features:\nLaptop charging\nEnclosed pod",
 
-  "Single Study Pod 217\n"
-  "Capacity: 1\n"
-  "Facilities: Plug, PC,\nheight adj. desk\n"
-  "Building: UCL East\nLibrary 2nd Floor\n"
-  "Features:\nLaptop charging\nEnclosed pod",
+    "Single Study Pod 217\n"
+    "Capacity: 1\n"
+    "Facilities: Plug, PC,\nheight adj. desk\n"
+    "Building: UCL East\nLibrary 2nd Floor\n"
+    "Features:\nLaptop charging\nEnclosed pod",
 
-  "Group Study Room 218\n"
-  "Capacity: 6\n"
-  "Facilities: Plug,\nmonitor for laptop\n"
-  "Building: UCL East\nLibrary 2nd Floor\n"
-  "Features:\nLaptop charging\nEnclosed room",
+    "Group Study Room 218\n"
+    "Capacity: 6\n"
+    "Facilities: Plug,\nmonitor for laptop\n"
+    "Building: UCL East\nLibrary 2nd Floor\n"
+    "Features:\nLaptop charging\nEnclosed room",
 
-  "Single Study Pod 212A\n"
-  "Capacity: 1\n"
-  "Facilities: Plug\n"
-  "Building: UCL East\nLibrary 2nd Floor\n"
-  "Features:\nLaptop charging\nEnclosed pod",
+    "Single Study Pod 212A\n"
+    "Capacity: 1\n"
+    "Facilities: Plug\n"
+    "Building: UCL East\nLibrary 2nd Floor\n"
+    "Features:\nLaptop charging\nEnclosed pod",
 
-  "Single Study Pod 212B\n"
-  "Capacity: 1\n"
-  "Facilities: Plug\n"
-  "Building: UCL East\nLibrary 2nd Floor\n"
-  "Features:\nLaptop charging\nEnclosed pod"
-};
+    "Single Study Pod 212B\n"
+    "Capacity: 1\n"
+    "Facilities: Plug\n"
+    "Building: UCL East\nLibrary 2nd Floor\n"
+    "Features:\nLaptop charging\nEnclosed pod"};
 
 // --------------------------------------------------
 // ROOM DATA STRUCTURE
 // --------------------------------------------------
-struct RoomData {
-  bool   hasStatus = false;
-  float  occupancy = 0;
-  float  noise = 0;
-  float  temperature = 0;
-  float  light = 0;
+struct RoomData
+{
+  bool hasStatus = false;
+  float occupancy = 0;
+  float noise = 0;
+  float temperature = 0;
+  float light = 0;
   String state = "neutral";
 
-  bool   hasTimeline = false;
-  int    timelineLen = 0;
-  bool   slotBooked[LED_COUNT];
+  bool hasTimeline = false;
+  int timelineLen = 0;
+  bool slotBooked[LED_COUNT];
 };
 
 RoomData rooms[ROOM_COUNT];
@@ -142,15 +143,15 @@ RoomData rooms[ROOM_COUNT];
 // --------------------------------------------------
 // UI STATE
 // --------------------------------------------------
-bool   timelineMode    = true;   // true = Bookings
-int    selectedRoom    = 0;
+bool timelineMode = true; // true = Bookings
+int selectedRoom = 0;
 
 unsigned long lastAttrChange = 0;
-unsigned long lastAnimStep   = 0;
+unsigned long lastAnimStep = 0;
 
-uint8_t currentAttr   = 0;       // 0=occ,1=noise,2=temp,3=light
-int     currentLEDCount = 0;
-int     targetLEDCount  = 0;
+uint8_t currentAttr = 0; // 0=occ,1=noise,2=temp,3=light
+int currentLEDCount = 0;
+int targetLEDCount = 0;
 
 // --------------------------------------------------
 // TFT COLORS
@@ -164,9 +165,12 @@ uint16_t BG;
 // --------------------------------------------------
 // HELPER: room ID → index
 // --------------------------------------------------
-int roomIndexFromId(const String& id) {
-  for (int i = 0; i < ROOM_COUNT; i++) {
-    if (id == ROOM_IDS[i]) return i;
+int roomIndexFromId(const String &id)
+{
+  for (int i = 0; i < ROOM_COUNT; i++)
+  {
+    if (id == ROOM_IDS[i])
+      return i;
   }
   return -1;
 }
@@ -174,10 +178,12 @@ int roomIndexFromId(const String& id) {
 // --------------------------------------------------
 // WIFI CONNECT  (multi-SSID: CE-Hub-Student, then Gilang)
 // --------------------------------------------------
-void connectWiFi() {
+void connectWiFi()
+{
   Serial.println("Connecting to WiFi...");
 
-  for (int i = 0; i < numNetworks; i++) {
+  for (int i = 0; i < numNetworks; i++)
+  {
     Serial.print("Trying SSID: ");
     Serial.println(ssids[i]);
 
@@ -186,18 +192,20 @@ void connectWiFi() {
 
     // Try for ~8 seconds per network
     while (WiFi.status() != WL_CONNECTED &&
-           millis() - startAttempt < 8000) {
+           millis() - startAttempt < 8000)
+    {
       Serial.print(".");
       delay(400);
     }
 
-    if (WiFi.status() == WL_CONNECTED) {
+    if (WiFi.status() == WL_CONNECTED)
+    {
       Serial.println("\nConnected!");
       Serial.print("SSID: ");
       Serial.println(ssids[i]);
       Serial.print("IP Address: ");
       Serial.println(WiFi.localIP());
-      return;  // success
+      return; // success
     }
 
     Serial.println("\nFailed. Trying next network...");
@@ -212,8 +220,10 @@ void connectWiFi() {
 // --------------------------------------------------
 // NEOPIXEL HELPERS
 // --------------------------------------------------
-void clearStrip() {
-  for (int i = 0; i < LED_COUNT; i++) {
+void clearStrip()
+{
+  for (int i = 0; i < LED_COUNT; i++)
+  {
     strip.setPixelColor(i, 0);
   }
   strip.show();
@@ -222,27 +232,31 @@ void clearStrip() {
 // --------------------------------------------------
 // TIMELINE RENDERING (Bookings mode)
 // --------------------------------------------------
-void renderTimeline(int idx) {
+void renderTimeline(int idx)
+{
   clearStrip();
 
-  RoomData& rd = rooms[idx];
-  if (!rd.hasTimeline) {
+  RoomData &rd = rooms[idx];
+  if (!rd.hasTimeline)
+  {
     Serial.println("renderTimeline: no timeline for this room yet");
     return;
   }
 
   int N = rd.timelineLen;
-  if (N > LED_COUNT) N = LED_COUNT;
+  if (N > LED_COUNT)
+    N = LED_COUNT;
 
   Serial.print("renderTimeline: room ");
   Serial.print(ROOM_IDS[idx]);
   Serial.print(" slots=");
   Serial.println(N);
 
-  for (int i = 0; i < N; i++) {
+  for (int i = 0; i < N; i++)
+  {
     uint32_t c = rd.slotBooked[i]
-                 ? strip.Color(255, 0, 0, 0)   // red = booked
-                 : strip.Color(0, 255, 0, 0);  // green = free
+                     ? strip.Color(255, 0, 0, 0)  // red = booked
+                     : strip.Color(0, 255, 0, 0); // green = free
 
     strip.setPixelColor(i, c);
     strip.show();
@@ -253,46 +267,61 @@ void renderTimeline(int idx) {
 // --------------------------------------------------
 // STATUS MODE ANIMATION ENGINE
 // --------------------------------------------------
-uint32_t attrColor(int attr) {
-  switch (attr) {
-    case 0:
-      // Occupancy → deep blue
-      return strip.Color(0, 20, 255, 0);
+uint32_t attrColor(int attr)
+{
+  switch (attr)
+  {
+  case 0:
+    // Occupancy → deep blue
+    return strip.Color(0, 20, 255, 0);
 
-    case 1:
-      // Noise → warm yellow
-      return strip.Color(255, 255, 0, 0);
+  case 1:
+    // Noise → warm yellow
+    return strip.Color(255, 255, 0, 0);
 
-    case 2:
-      // Temperature → warm-ish
-      return strip.Color(0, 255, 0, 20);
+  case 2:
+    // Temperature → warm-ish
+    return strip.Color(0, 255, 0, 20);
 
-    case 3:
-      // Light → soft white
-      return strip.Color(0, 0, 0, 80);
+  case 3:
+    // Light → soft white
+    return strip.Color(0, 0, 0, 80);
   }
   return strip.Color(0, 0, 0, 0);
 }
 
-void computeAttrTarget(const RoomData& rd, int attr) {
-  switch (attr) {
-    case 0: targetLEDCount = rd.occupancy / 4.2;          break; // 0–100 → 0–24
-    case 1: targetLEDCount = (rd.noise - 30) / 2.1;       break; // 30–80
-    case 2: targetLEDCount = (rd.temperature - 17) * 2;   break; // 17–29
-    case 3: targetLEDCount = (rd.light - 100) / 21.0;     break; // 100–600
+void computeAttrTarget(const RoomData &rd, int attr)
+{
+  switch (attr)
+  {
+  case 0:
+    targetLEDCount = rd.occupancy / 4.2;
+    break; // 0–100 → 0–24
+  case 1:
+    targetLEDCount = (rd.noise - 30) / 2.1;
+    break; // 30–80
+  case 2:
+    targetLEDCount = (rd.temperature - 17) * 2;
+    break; // 17–29
+  case 3:
+    targetLEDCount = (rd.light - 100) / 21.0;
+    break; // 100–600
   }
-  targetLEDCount   = constrain(targetLEDCount, 0, LED_COUNT);
-  currentLEDCount  = 0;
+  targetLEDCount = constrain(targetLEDCount, 0, LED_COUNT);
+  currentLEDCount = 0;
 }
 
-void updateStatusAnimation() {
-  RoomData& rd = rooms[selectedRoom];
-  if (!rd.hasStatus) return;
+void updateStatusAnimation()
+{
+  RoomData &rd = rooms[selectedRoom];
+  if (!rd.hasStatus)
+    return;
 
   unsigned long now = millis();
 
   // Rotate attribute every 5s
-  if (now - lastAttrChange > 5000) {
+  if (now - lastAttrChange > 5000)
+  {
     lastAttrChange = now;
     currentAttr = (currentAttr + 1) % 4;
     computeAttrTarget(rd, currentAttr);
@@ -300,9 +329,11 @@ void updateStatusAnimation() {
   }
 
   // Progressive fill
-  if (now - lastAnimStep > 120) {
+  if (now - lastAnimStep > 120)
+  {
     lastAnimStep = now;
-    if (currentLEDCount < targetLEDCount) {
+    if (currentLEDCount < targetLEDCount)
+    {
       strip.setPixelColor(currentLEDCount, attrColor(currentAttr));
       strip.show();
       currentLEDCount++;
@@ -313,14 +344,15 @@ void updateStatusAnimation() {
 // --------------------------------------------------
 // COLOR SETUP
 // --------------------------------------------------
-void setupColors() {
+void setupColors()
+{
   BG = ST7735_BLACK;
 
   FACE1 = tft.color565(255, 170, 0);
   FACE2 = tft.color565(255, 200, 0);
   FACE3 = tft.color565(255, 230, 100);
 
-  EYE   = tft.color565(50, 30, 10);
+  EYE = tft.color565(50, 30, 10);
   MOUTH = tft.color565(200, 0, 0);
   CHEEK = tft.color565(255, 120, 120);
 
@@ -333,16 +365,20 @@ void setupColors() {
 // -----------------------------------------------------------
 // TFT HEADER
 // -----------------------------------------------------------
-void drawHeader(int roomIndex) {
+void drawHeader(int roomIndex)
+{
   tft.fillRect(0, 0, 128, 20, ST7735_BLUE);
 
   tft.setTextSize(1);
   tft.setTextColor(ST7735_WHITE);
-  tft.setCursor(4, 5);
+  tft.setCursor(LEFT_MARGIN, 5);
 
-  if (timelineMode) {
+  if (timelineMode)
+  {
     tft.print("Bookings | ");
-  } else {
+  }
+  else
+  {
     tft.print("Condition | ");
   }
 
@@ -352,7 +388,8 @@ void drawHeader(int roomIndex) {
 // -----------------------------------------------------------
 // CAPTION (Condition mode only)
 // -----------------------------------------------------------
-void caption(const char* s) {
+void caption(const char *s)
+{
   uint16_t shade = tft.color565(40, 40, 40);
   tft.fillRect(0, 120, 128, 20, shade);
 
@@ -361,60 +398,120 @@ void caption(const char* s) {
 
   int16_t x1, y1;
   uint16_t w, h;
-  tft.getTextBounds((char*)s, 0, 0, &x1, &y1, &w, &h);
-  int x = (128 - (int)w) / 2;
+  tft.getTextBounds((char *)s, 0, 0, &x1, &y1, &w, &h);
+
+  // Center within usable width, considering margins
+  int x = LEFT_MARGIN + (USABLE_WIDTH - (int)w) / 2;
+  if (x < LEFT_MARGIN)
+    x = LEFT_MARGIN; // Ensure minimum margin
 
   tft.setCursor(x, 128);
   tft.print(s);
 }
 
 // -----------------------------------------------------------
+// TEXT PRINTING WITH MARGIN HANDLING
+// -----------------------------------------------------------
+void printWithMargin(const char *text, int startX, int startY)
+{
+  // This function prints text with proper margin handling
+  // It manually handles line breaks to respect the right margin
+
+  int cursorX = startX;
+  int cursorY = startY;
+  int charWidth = 6;  // Character width for text size 1
+  int lineHeight = 8; // Line height for text size 1
+  int maxWidth = USABLE_WIDTH;
+
+  String str = String(text);
+  int len = str.length();
+
+  for (int i = 0; i < len; i++)
+  {
+    char c = str.charAt(i);
+
+    // Handle newline
+    if (c == '\n')
+    {
+      cursorX = startX;
+      cursorY += lineHeight;
+      continue;
+    }
+
+    // Check if we need to wrap
+    if (cursorX + charWidth > startX + maxWidth)
+    {
+      cursorX = startX;
+      cursorY += lineHeight;
+    }
+
+    // Don't print beyond screen bottom
+    if (cursorY > 115)
+      break;
+
+    tft.setCursor(cursorX, cursorY);
+    tft.print(c);
+    cursorX += charWidth;
+  }
+}
+
+// -----------------------------------------------------------
 // FACE DRAWING HELPERS
 // -----------------------------------------------------------
-void clearIcon() {
+void clearIcon()
+{
   // Clear main emoji area (20–120)
   tft.fillRect(0, 20, 128, 100, BG);
 }
 
-void drawFaceBase() {
+void drawFaceBase()
+{
   clearIcon();
   tft.fillCircle(CX, CY, 42, FACE1);
   tft.fillCircle(CX, CY, 38, FACE2);
   tft.fillCircle(CX, CY, 32, FACE3);
 }
 
-void eyeHappySoft(int x, int y) {
-  tft.drawLine(x - 6, y,   x,     y - 4, EYE);
-  tft.drawLine(x,     y - 4, x + 6, y,   EYE);
+void eyeHappySoft(int x, int y)
+{
+  tft.drawLine(x - 6, y, x, y - 4, EYE);
+  tft.drawLine(x, y - 4, x + 6, y, EYE);
 }
 
-void eyeBusyLeft(int x, int y) {
+void eyeBusyLeft(int x, int y)
+{
   tft.drawLine(x - 6, y - 2, x + 2, y + 1, EYE);
 }
 
-void eyeBusyRight(int x, int y) {
+void eyeBusyRight(int x, int y)
+{
   tft.drawLine(x - 2, y + 1, x + 6, y - 2, EYE);
 }
 
-void eyeSleepy(int x, int y) {
+void eyeSleepy(int x, int y)
+{
   tft.drawLine(x - 6, y, x + 6, y + 2, EYE);
 }
 
-void eyebrowAngry(int x, int y) {
-  tft.drawLine(x - 8, y - 8, x + 2,  y - 12, EYE);
-  tft.drawLine(x + 2, y - 12, x + 12, y - 8,  EYE);
+void eyebrowAngry(int x, int y)
+{
+  tft.drawLine(x - 8, y - 8, x + 2, y - 12, EYE);
+  tft.drawLine(x + 2, y - 12, x + 12, y - 8, EYE);
 }
 
-void mouthZigZag() {
-  tft.drawLine(CX - 14, CY + 18, CX - 7,  CY + 14, MOUTH);
-  tft.drawLine(CX - 7,  CY + 14, CX,     CY + 18, MOUTH);
-  tft.drawLine(CX,      CY + 18, CX + 7, CY + 14, MOUTH);
-  tft.drawLine(CX + 7,  CY + 14, CX + 14, CY + 18, MOUTH);
+void mouthZigZag()
+{
+  tft.drawLine(CX - 14, CY + 18, CX - 7, CY + 14, MOUTH);
+  tft.drawLine(CX - 7, CY + 14, CX, CY + 18, MOUTH);
+  tft.drawLine(CX, CY + 18, CX + 7, CY + 14, MOUTH);
+  tft.drawLine(CX + 7, CY + 14, CX + 14, CY + 18, MOUTH);
 }
 
-void mouthChatter() {
+void mouthChatter()
+{
   tft.fillRect(CX - 14, CY + 12, 28, 8, ST7735_WHITE);
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < 6; i++)
+  {
     tft.drawLine(CX - 14 + i * 5, CY + 12,
                  CX - 14 + i * 5, CY + 20,
                  EYE);
@@ -424,10 +521,11 @@ void mouthChatter() {
 // -----------------------------------------------------------
 // EMOTICONS WITH CAPTION (Condition mode)
 // -----------------------------------------------------------
-void iconPerfect() {
+void iconPerfect()
+{
   drawFaceBase();
   tft.fillRoundRect(CX - 25, CY - 12, 16, 12, 4, EYE);
-  tft.fillRoundRect(CX + 9,  CY - 12, 16, 12, 4, EYE);
+  tft.fillRoundRect(CX + 9, CY - 12, 16, 12, 4, EYE);
   tft.fillCircle(CX, CY + 18, 16, MOUTH);
   tft.fillCircle(CX, CY + 10, 16, FACE3);
   tft.fillCircle(CX - 22, CY + 10, 6, CHEEK);
@@ -435,7 +533,8 @@ void iconPerfect() {
   caption("Perfect");
 }
 
-void iconGood() {
+void iconGood()
+{
   drawFaceBase();
   eyeHappySoft(CX - 20, CY - 8);
   eyeHappySoft(CX + 20, CY - 8);
@@ -446,18 +545,20 @@ void iconGood() {
   caption("Good");
 }
 
-void iconCalm() {
+void iconCalm()
+{
   drawFaceBase();
   tft.drawLine(CX - 26, CY - 4, CX - 14, CY - 6, EYE);
   tft.drawLine(CX + 14, CY - 6, CX + 26, CY - 4, EYE);
-  tft.drawLine(CX - 10, CY + 17, CX,     CY + 19, MOUTH);
-  tft.drawLine(CX,      CY + 19, CX + 10, CY + 17, MOUTH);
+  tft.drawLine(CX - 10, CY + 17, CX, CY + 19, MOUTH);
+  tft.drawLine(CX, CY + 19, CX + 10, CY + 17, MOUTH);
   tft.fillCircle(CX - 22, CY + 10, 5, CHEEK);
   tft.fillCircle(CX + 22, CY + 10, 5, CHEEK);
   caption("Calm");
 }
 
-void iconNeutral() {
+void iconNeutral()
+{
   drawFaceBase();
   tft.fillRoundRect(CX - 26, CY - 12, 16, 10, 3, EYE);
   tft.fillRoundRect(CX + 10, CY - 12, 16, 10, 3, EYE);
@@ -465,7 +566,8 @@ void iconNeutral() {
   caption("Neutral");
 }
 
-void iconBusy() {
+void iconBusy()
+{
   drawFaceBase();
   eyeBusyLeft(CX - 20, CY - 10);
   eyeBusyRight(CX + 20, CY - 10);
@@ -476,7 +578,8 @@ void iconBusy() {
   caption("Busy");
 }
 
-void iconNoisy() {
+void iconNoisy()
+{
   drawFaceBase();
   eyebrowAngry(CX - 20, CY - 10);
   eyebrowAngry(CX + 20, CY - 10);
@@ -485,12 +588,13 @@ void iconNoisy() {
   tft.drawLine(CX + 14, CY - 4, CX + 26, CY + 2, EYE);
   tft.drawLine(CX + 14, CY + 2, CX + 26, CY - 4, EYE);
   mouthZigZag();
-  tft.drawLine(10,  CY - 5,  20,  CY - 10, EYE);
+  tft.drawLine(10, CY - 5, 20, CY - 10, EYE);
   tft.drawLine(108, CY - 5, 118, CY - 10, EYE);
   caption("Noisy");
 }
 
-void iconWarm() {
+void iconWarm()
+{
   drawFaceBase();
   tft.drawLine(CX - 26, CY - 4, CX - 14, CY - 2, EYE);
   tft.drawLine(CX + 14, CY - 2, CX + 26, CY - 4, EYE);
@@ -505,7 +609,8 @@ void iconWarm() {
   caption("Warm");
 }
 
-void iconCold() {
+void iconCold()
+{
   drawFaceBase();
   tft.drawLine(CX - 28, CY - 16, CX - 12, CY - 22, EYE);
   tft.drawLine(CX + 12, CY - 22, CX + 28, CY - 16, EYE);
@@ -517,7 +622,8 @@ void iconCold() {
   caption("Cold");
 }
 
-void iconDim() {
+void iconDim()
+{
   drawFaceBase();
   eyeSleepy(CX - 20, CY - 6);
   eyeSleepy(CX + 20, CY - 6);
@@ -529,14 +635,15 @@ void iconDim() {
   caption("Dim");
 }
 
-void iconOverloaded() {
+void iconOverloaded()
+{
   drawFaceBase();
   tft.drawCircle(CX - 20, CY - 10, 8, EYE);
   tft.drawCircle(CX + 20, CY - 10, 8, EYE);
   tft.drawCircle(CX - 20, CY - 10, 4, EYE);
   tft.drawCircle(CX + 20, CY - 10, 4, EYE);
   mouthZigZag();
-  tft.drawLine(10,  CY - 15, 25,  CY - 25, MOUTH);
+  tft.drawLine(10, CY - 15, 25, CY - 25, MOUTH);
   tft.drawLine(118, CY - 15, 103, CY - 25, MOUTH);
   caption("Overloaded");
 }
@@ -544,23 +651,35 @@ void iconOverloaded() {
 // -----------------------------------------------------------
 // STATE → ICON SELECTOR
 // -----------------------------------------------------------
-void drawStateIcon(const String& state) {
-  if      (state == "perfect")     iconPerfect();
-  else if (state == "good")        iconGood();
-  else if (state == "calm")        iconCalm();
-  else if (state == "busy")        iconBusy();
-  else if (state == "noisy")       iconNoisy();
-  else if (state == "warm")        iconWarm();
-  else if (state == "cold")        iconCold();
-  else if (state == "dim")         iconDim();
-  else if (state == "overloaded")  iconOverloaded();
-  else                             iconNeutral();
+void drawStateIcon(const String &state)
+{
+  if (state == "perfect")
+    iconPerfect();
+  else if (state == "good")
+    iconGood();
+  else if (state == "calm")
+    iconCalm();
+  else if (state == "busy")
+    iconBusy();
+  else if (state == "noisy")
+    iconNoisy();
+  else if (state == "warm")
+    iconWarm();
+  else if (state == "cold")
+    iconCold();
+  else if (state == "dim")
+    iconDim();
+  else if (state == "overloaded")
+    iconOverloaded();
+  else
+    iconNeutral();
 }
 
 // -----------------------------------------------------------
 // ROOM DETAILS (Bookings Mode) — NOW WITH % BOOKED TODAY
 // -----------------------------------------------------------
-void showRoomDetails(int idx) {
+void showRoomDetails(int idx)
+{
   // Clear main area
   tft.fillRect(0, 20, 128, 100, BG);
   drawHeader(idx);
@@ -572,20 +691,25 @@ void showRoomDetails(int idx) {
   tft.setTextWrap(true);
   tft.setTextSize(1);
   tft.setTextColor(ST7735_WHITE);
-  tft.setCursor(2, 24);
-  tft.println(ROOM_DETAILS[idx]);
+  tft.setCursor(LEFT_MARGIN, 24);
+
+  // Print room details with proper margin handling
+  printWithMargin(ROOM_DETAILS[idx], LEFT_MARGIN, 24);
 
   // ----- NEW: Add fixed vertical spacing -----
   // Ensures percent text never overlaps description
-  int percentY = 108;   // moved lower for safe spacing
+  int percentY = 108; // moved lower for safe spacing
 
   // ----- Booking percentage (big text) -----
-  RoomData& rd = rooms[idx];
-  if (rd.hasTimeline && rd.timelineLen > 0) {
+  RoomData &rd = rooms[idx];
+  if (rd.hasTimeline && rd.timelineLen > 0)
+  {
 
     int bookedSlots = 0;
-    for (int i = 0; i < rd.timelineLen; i++) {
-      if (rd.slotBooked[i]) bookedSlots++;
+    for (int i = 0; i < rd.timelineLen; i++)
+    {
+      if (rd.slotBooked[i])
+        bookedSlots++;
     }
 
     int pct = (bookedSlots * 100 + rd.timelineLen / 2) / rd.timelineLen;
@@ -596,12 +720,15 @@ void showRoomDetails(int idx) {
     tft.setTextColor(ST7735_YELLOW);
     tft.setTextSize(2);
 
-    // Center the text
+    // Center the text within usable width, considering margins
     int16_t x1, y1;
     uint16_t w, h;
     tft.getTextBounds(buf, 0, 0, &x1, &y1, &w, &h);
 
-    int x = (128 - (int)w) / 2;
+    // Center within usable area
+    int x = LEFT_MARGIN + (USABLE_WIDTH - (int)w) / 2;
+    if (x < LEFT_MARGIN)
+      x = LEFT_MARGIN; // Ensure minimum margin
 
     // Use reserved vertical space far below description
     tft.setCursor(x, percentY);
@@ -609,31 +736,40 @@ void showRoomDetails(int idx) {
   }
 }
 
-
 // -----------------------------------------------------------
 // MODE TOGGLE (Bookings ↔ Condition)
 // -----------------------------------------------------------
-void toggleMode() {
+void toggleMode()
+{
   timelineMode = !timelineMode;
 
   Serial.print("MODE = ");
   Serial.println(timelineMode ? "BOOKINGS" : "CONDITION");
 
-  if (timelineMode) {
+  if (timelineMode)
+  {
     // BOOKINGS MODE
     showRoomDetails(selectedRoom);
-    if (rooms[selectedRoom].hasTimeline) {
+    if (rooms[selectedRoom].hasTimeline)
+    {
       renderTimeline(selectedRoom);
-    } else {
+    }
+    else
+    {
       clearStrip();
     }
-  } else {
+  }
+  else
+  {
     // CONDITION MODE
     drawHeader(selectedRoom);
-    if (rooms[selectedRoom].hasStatus) {
+    if (rooms[selectedRoom].hasStatus)
+    {
       drawStateIcon(rooms[selectedRoom].state);
       computeAttrTarget(rooms[selectedRoom], currentAttr);
-    } else {
+    }
+    else
+    {
       iconNeutral();
     }
     clearStrip();
@@ -643,12 +779,14 @@ void toggleMode() {
 // -----------------------------------------------------------
 // MQTT CALLBACK — HANDLE TIMELINE + CONDITION DATA
 // -----------------------------------------------------------
-void mqttCallback(char* topic, byte* payload, unsigned int length) {
+void mqttCallback(char *topic, byte *payload, unsigned int length)
+{
   Serial.print("TOPIC: ");
   Serial.println(topic);
 
   String json;
-  for (unsigned int i = 0; i < length; i++) {
+  for (unsigned int i = 0; i < length; i++)
+  {
     json += (char)payload[i];
   }
 
@@ -657,14 +795,15 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
 
   StaticJsonDocument<1024> doc;
   auto err = deserializeJson(doc, json);
-  if (err) {
+  if (err)
+  {
     Serial.print("JSON parse error: ");
     Serial.println(err.c_str());
     return;
   }
 
   bool isTimeline = doc.containsKey("timeline");
-  bool isStatus   = doc.containsKey("state");
+  bool isStatus = doc.containsKey("state");
 
   Serial.print("isTimeline=");
   Serial.print(isTimeline);
@@ -673,36 +812,46 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
 
   // Determine room id
   String rid;
-  if (doc.containsKey("room_id")) {
-    rid = doc["room_id"].as<const char*>();
-  } else if (doc.containsKey("room")) {
-    rid = doc["room"].as<const char*>();
-  } else {
+  if (doc.containsKey("room_id"))
+  {
+    rid = doc["room_id"].as<const char *>();
+  }
+  else if (doc.containsKey("room"))
+  {
+    rid = doc["room"].as<const char *>();
+  }
+  else
+  {
     String t = topic;
     int pos = t.lastIndexOf('/');
-    if (pos >= 0) rid = t.substring(pos + 1);
+    if (pos >= 0)
+      rid = t.substring(pos + 1);
   }
 
   Serial.print("Resolved room id: ");
   Serial.println(rid);
 
   int idx = roomIndexFromId(rid);
-  if (idx < 0) {
+  if (idx < 0)
+  {
     Serial.print("Unknown room id: ");
     Serial.println(rid);
     return;
   }
 
-  RoomData& rd = rooms[idx];
+  RoomData &rd = rooms[idx];
 
   // --- TIMELINE / BOOKINGS UPDATE ---
-  if (isTimeline) {
+  if (isTimeline)
+  {
     JsonArray arr = doc["timeline"].as<JsonArray>();
     rd.timelineLen = arr.size();
-    if (rd.timelineLen > LED_COUNT) rd.timelineLen = LED_COUNT;
+    if (rd.timelineLen > LED_COUNT)
+      rd.timelineLen = LED_COUNT;
 
-    for (int i = 0; i < rd.timelineLen; i++) {
-      const char* v = arr[i];
+    for (int i = 0; i < rd.timelineLen; i++)
+    {
+      const char *v = arr[i];
       rd.slotBooked[i] = (strcmp(v, "booked") == 0);
       Serial.print("timeline[");
       Serial.print(i);
@@ -716,27 +865,30 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
     Serial.print("  slots=");
     Serial.println(rd.timelineLen);
 
-    if (idx == selectedRoom && timelineMode) {
+    if (idx == selectedRoom && timelineMode)
+    {
       showRoomDetails(idx);
       renderTimeline(idx);
     }
   }
 
   // --- CONDITION UPDATE ---
-  if (isStatus) {
-    rd.occupancy   = doc["occupancy"]   | 0.0;
-    rd.noise       = doc["noise"]       | 0.0;
+  if (isStatus)
+  {
+    rd.occupancy = doc["occupancy"] | 0.0;
+    rd.noise = doc["noise"] | 0.0;
     rd.temperature = doc["temperature"] | 0.0;
-    rd.light       = doc["light"]       | 0.0;
-    rd.state       = doc["state"].as<String>();
-    rd.hasStatus   = true;
+    rd.light = doc["light"] | 0.0;
+    rd.state = doc["state"].as<String>();
+    rd.hasStatus = true;
 
     Serial.print("Condition update for room ");
     Serial.print(ROOM_IDS[idx]);
     Serial.print("  state=");
     Serial.println(rd.state);
 
-    if (idx == selectedRoom && !timelineMode) {
+    if (idx == selectedRoom && !timelineMode)
+    {
       drawHeader(selectedRoom);
       drawStateIcon(rd.state);
       computeAttrTarget(rooms[selectedRoom], currentAttr);
@@ -748,30 +900,39 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
 // -----------------------------------------------------------
 // MQTT CONNECT
 // -----------------------------------------------------------
-void connectMQTT() {
+void connectMQTT()
+{
   mqttClient.setServer(MQTT_HOST, MQTT_PORT);
   mqttClient.setCallback(mqttCallback);
 
   // IMPORTANT: allow large JSON (timeline)
   mqttClient.setBufferSize(512);
 
-  while (!mqttClient.connected()) {
+  while (!mqttClient.connected())
+  {
     Serial.print("Connecting to MQTT...");
     String clientId = "UCLDevice-";
     clientId += String(random(0xFFFF), HEX);
 
-    if (mqttClient.connect(clientId.c_str(), MQTT_USER, MQTT_PASS)) {
+    if (mqttClient.connect(clientId.c_str(), MQTT_USER, MQTT_PASS))
+    {
       Serial.println("connected!");
 
       // Timeline (bookings) feed for all rooms
-      mqttClient.subscribe("student/CASA0019/Gilang/studyspace/+/timeline");
+      String timelineTopic = String(MQTT_BASE) + "/+/timeline";
+      mqttClient.subscribe(timelineTopic.c_str());
+
       // Status (condition) feed for all rooms
-      mqttClient.subscribe("student/CASA0019/Gilang/studyspace/+/status");
+      String statusTopic = String(MQTT_BASE) + "/+/status";
+      mqttClient.subscribe(statusTopic.c_str());
 
-      Serial.println("Subscribed → student/CASA0019/Gilang/studyspace/+/timeline");
-      Serial.println("Subscribed → student/CASA0019/Gilang/studyspace/+/status");
-
-    } else {
+      Serial.print("Subscribed → ");
+      Serial.println(timelineTopic);
+      Serial.print("Subscribed → ");
+      Serial.println(statusTopic);
+    }
+    else
+    {
       Serial.print("failed, rc=");
       Serial.print(mqttClient.state());
       Serial.println(" retrying...");
@@ -783,15 +944,16 @@ void connectMQTT() {
 // -----------------------------------------------------------
 // SETUP
 // -----------------------------------------------------------
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   delay(1500);
   Serial.println("=== UCL Study Space Visualiser v2 (timeline + % booked) ===");
 
   // Rotary encoder
   pinMode(ENC_CLK, INPUT_PULLUP);
-  pinMode(ENC_DT,  INPUT_PULLUP);
-  pinMode(ENC_SW,  INPUT_PULLUP);
+  pinMode(ENC_DT, INPUT_PULLUP);
+  pinMode(ENC_SW, INPUT_PULLUP);
   lastClk = digitalRead(ENC_CLK);
 
   // TFT
@@ -816,23 +978,31 @@ void setup() {
 // -----------------------------------------------------------
 // LOOP
 // -----------------------------------------------------------
-void loop() {
+void loop()
+{
   // MQTT keep-alive
-  if (!mqttClient.connected()) {
+  if (!mqttClient.connected())
+  {
     connectMQTT();
   }
   mqttClient.loop();
 
   // --- ROTARY ENCODER ROTATION ---
   int currentClk = digitalRead(ENC_CLK);
-  if (currentClk != lastClk) {
-    if (currentClk == LOW) {
+  if (currentClk != lastClk)
+  {
+    if (currentClk == LOW)
+    {
       // Direction
-      if (digitalRead(ENC_DT) != currentClk) {
+      if (digitalRead(ENC_DT) != currentClk)
+      {
         selectedRoom = (selectedRoom + 1) % ROOM_COUNT;
-      } else {
+      }
+      else
+      {
         selectedRoom--;
-        if (selectedRoom < 0) selectedRoom = ROOM_COUNT - 1;
+        if (selectedRoom < 0)
+          selectedRoom = ROOM_COUNT - 1;
       }
 
       Serial.print("Room → ");
@@ -841,19 +1011,28 @@ void loop() {
       Serial.print(ROOM_NAMES[selectedRoom]);
       Serial.println(")");
 
-      if (timelineMode) {
+      if (timelineMode)
+      {
         showRoomDetails(selectedRoom);
-        if (rooms[selectedRoom].hasTimeline) {
+        if (rooms[selectedRoom].hasTimeline)
+        {
           renderTimeline(selectedRoom);
-        } else {
+        }
+        else
+        {
           clearStrip();
         }
-      } else {
+      }
+      else
+      {
         drawHeader(selectedRoom);
-        if (rooms[selectedRoom].hasStatus) {
+        if (rooms[selectedRoom].hasStatus)
+        {
           drawStateIcon(rooms[selectedRoom].state);
           computeAttrTarget(rooms[selectedRoom], currentAttr);
-        } else {
+        }
+        else
+        {
           iconNeutral();
         }
         clearStrip();
@@ -864,16 +1043,19 @@ void loop() {
 
   // --- ROTARY BUTTON (MODE SWITCH) ---
   bool b = digitalRead(ENC_SW);
-  if (b != lastButton && (millis() - lastButtonTime > BUTTON_DEBOUNCE)) {
+  if (b != lastButton && (millis() - lastButtonTime > BUTTON_DEBOUNCE))
+  {
     lastButtonTime = millis();
     lastButton = b;
-    if (b == LOW) {
+    if (b == LOW)
+    {
       toggleMode();
     }
   }
 
   // --- CONDITION MODE ANIMATION ---
-  if (!timelineMode) {
+  if (!timelineMode)
+  {
     updateStatusAnimation();
   }
 
