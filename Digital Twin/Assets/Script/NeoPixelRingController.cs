@@ -279,6 +279,18 @@ public class NeoPixelRingController : MonoBehaviour
             // Simple JSON parsing for timeline array
             // Expected format: {"room": "24380", "timeline": ["free", "booked", "free", ...]}
 
+            // 1. Extract room ID from message
+            string messageRoomId = ExtractStringValue(json, "room");
+
+            // 2. Check if this message is for the current room
+            if (!string.IsNullOrEmpty(messageRoomId) && messageRoomId != currentRoomId)
+            {
+                Debug.Log($"[PARSE] 🚫 Timeline for room {messageRoomId}, but current room is {currentRoomId}. Ignoring.");
+                return;
+            }
+
+            Debug.Log($"[PARSE] ✓ Timeline message is for current room {currentRoomId}");
+
             int timelineStart = json.IndexOf("\"timeline\"");
             if (timelineStart == -1)
             {
@@ -339,6 +351,18 @@ public class NeoPixelRingController : MonoBehaviour
         {
             // Simple JSON parsing for status data
             // Expected format: {"room":"24380","occupancy":45.5,"noise":52.3,"temperature":22.1,"light":380.0,"state":"good"}
+
+            // 1. Extract room ID from message
+            string messageRoomId = ExtractStringValue(json, "room");
+
+            // 2. Check if this message is for the current room
+            if (!string.IsNullOrEmpty(messageRoomId) && messageRoomId != currentRoomId)
+            {
+                Debug.Log($"[PARSE] 🚫 Status for room {messageRoomId}, but current room is {currentRoomId}. Ignoring.");
+                return;
+            }
+
+            Debug.Log($"[PARSE] ✓ Status message is for current room {currentRoomId}");
 
             occupancy = ExtractFloatValue(json, "occupancy");
             noise = ExtractFloatValue(json, "noise");

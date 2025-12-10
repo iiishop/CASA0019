@@ -1,0 +1,216 @@
+.room-info-panel {
+    width: 400px;
+    height: 600px;
+    background-color: rgb(30, 30, 30);
+    border-radius: 10px;
+    padding: 20px;
+    border-width: 2px;
+    border-color: rgb(60, 60, 60);
+}
+
+/* Header */
+.header {
+    background-color: rgb(0, 122, 204);
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-label {
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: rgb(255, 255, 255);
+    -unity-text-align: middle-center;
+}
+
+/* Room Number Section */
+.room-number-section {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgb(40, 40, 40);
+    border-radius: 5px;
+}
+
+.room-label {
+    font-size: 16px;
+    color: rgb(200, 200, 200);
+    margin-right: 10px;
+}
+
+.room-number {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: rgb(255, 200, 0);
+}
+
+/* Room Name Section */
+.room-name-section {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: rgb(40, 40, 40);
+    border-radius: 5px;
+    align-items: center;
+}
+
+.room-name {
+    font-size: 14px;
+    color: rgb(180, 180, 180);
+    -unity-text-align: middle-center;
+}
+
+/* Booking Section */
+.booking-section {
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: rgb(40, 40, 40);
+    border-radius: 5px;
+}
+
+.booking-header {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(200, 200, 200);
+    margin-bottom: 10px;
+}
+
+/* Percentage Display */
+.percentage-section {
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.booking-percentage {
+    font-size: 36px;
+    -unity-font-style: bold;
+    color: rgb(255, 200, 0);
+    margin-bottom: 5px;
+}
+
+.booked-label {
+    font-size: 12px;
+    color: rgb(150, 150, 150);
+}
+
+/* Bar Chart */
+.bar-container {
+    flex-direction: row;
+    height: 30px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.booked-bar {
+    background-color: rgb(255, 50, 50);
+    flex-grow: 1;
+    transition-duration: 0.5s;
+}
+
+.free-bar {
+    background-color: rgb(50, 255, 50);
+    flex-grow: 1;
+    transition-duration: 0.5s;
+}
+
+/* Legend */
+.legend {
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.legend-item {
+    flex-direction: row;
+    align-items: center;
+}
+
+.legend-color {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+.booked-color {
+    background-color: rgb(255, 50, 50);
+}
+
+.free-color {
+    background-color: rgb(50, 255, 50);
+}
+
+.legend-label {
+    font-size: 11px;
+    color: rgb(180, 180, 180);
+}
+
+/* Timeline Section */
+.timeline-section {
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: rgb(40, 40, 40);
+    border-radius: 5px;
+}
+
+.timeline-header {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(200, 200, 200);
+    margin-bottom: 10px;
+}
+
+.timeline-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.timeline-slot {
+    width: 12px;
+    height: 30px;
+    margin: 2px;
+    border-radius: 2px;
+    background-color: rgb(80, 80, 80);
+    transition-duration: 0.3s;
+}
+
+.timeline-slot.booked {
+    background-color: rgb(255, 50, 50);
+}
+
+.timeline-slot.free {
+    background-color: rgb(50, 255, 50);
+}
+
+/* Status Section */
+.status-section {
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    background-color: rgb(40, 40, 40);
+    border-radius: 5px;
+}
+
+.status-indicator {
+    font-size: 16px;
+    margin-right: 10px;
+    color: rgb(150, 150, 150);
+}
+
+.status-indicator.connected {
+    color: rgb(50, 255, 50);
+}
+
+.status-indicator.disconnected {
+    color: rgb(150, 150, 150);
+}
+
+.status-text {
+    font-size: 11px;
+    color: rgb(150, 150, 150);
+    flex-grow: 1;
+}

@@ -1,0 +1,44 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/RoomInfoPanel.uss?fileID=7433441132597879392&amp;guid=ec07dca4d0e32e949a3945d22810e609&amp;type=3#RoomInfoPanel" />
+    <ui:VisualElement name="RoomInfoPanel" class="room-info-panel">
+        <ui:VisualElement name="Header" class="header">
+            <ui:Label text="Current Room" name="HeaderLabel" class="header-label" />
+        </ui:VisualElement>
+        <ui:VisualElement name="RoomNumberSection" class="room-number-section">
+            <ui:Label text="Room:" name="RoomLabel" class="room-label" />
+            <ui:Label text="24380" name="RoomNumber" class="room-number" />
+        </ui:VisualElement>
+        <ui:VisualElement name="RoomNameSection" class="room-name-section">
+            <ui:Label text="Single Study Pod 216" name="RoomName" class="room-name" />
+        </ui:VisualElement>
+        <ui:VisualElement name="BookingSection" class="booking-section">
+            <ui:Label text="Today&apos;s Booking" name="BookingHeader" class="booking-header" />
+            <ui:VisualElement name="PercentageSection" class="percentage-section">
+                <ui:Label text="0%" name="BookingPercentage" class="booking-percentage" />
+                <ui:Label text="booked" name="BookedLabel" class="booked-label" />
+            </ui:VisualElement>
+            <ui:VisualElement name="BarContainer" class="bar-container">
+                <ui:VisualElement name="BookedBar" class="booked-bar" />
+                <ui:VisualElement name="FreeBar" class="free-bar" />
+            </ui:VisualElement>
+            <ui:VisualElement name="Legend" class="legend">
+                <ui:VisualElement name="BookedLegend" class="legend-item">
+                    <ui:VisualElement name="BookedColor" class="legend-color booked-color" />
+                    <ui:Label text="Booked" name="BookedLegendLabel" class="legend-label" />
+                </ui:VisualElement>
+                <ui:VisualElement name="FreeLegend" class="legend-item">
+                    <ui:VisualElement name="FreeColor" class="legend-color free-color" />
+                    <ui:Label text="Free" name="FreeLegendLabel" class="legend-label" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="TimelineSection" class="timeline-section">
+            <ui:Label text="Timeline (9:00 - 21:00)" name="TimelineHeader" class="timeline-header" />
+            <ui:VisualElement name="TimelineContainer" class="timeline-container" />
+        </ui:VisualElement>
+        <ui:VisualElement name="StatusSection" class="status-section">
+            <ui:Label text="●" name="StatusIndicator" class="status-indicator disconnected" />
+            <ui:Label text="Waiting for data..." name="StatusText" class="status-text" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
