@@ -558,22 +558,57 @@ void drawStateIcon(const String& state) {
 }
 
 // -----------------------------------------------------------
-// ROOM DETAILS (Bookings Mode) — NO CAPTION
+// ROOM DETAILS (Bookings Mode) — NOW WITH % BOOKED TODAY
 // -----------------------------------------------------------
 void showRoomDetails(int idx) {
   // Clear main area
   tft.fillRect(0, 20, 128, 100, BG);
   drawHeader(idx);
 
-  // Ensure caption band is blank (no Condition text bleed)
+  // Clear caption band
   tft.fillRect(0, 120, 128, 20, BG);
 
+  // --- Room description (normal size) ---
   tft.setTextWrap(true);
   tft.setTextSize(1);
   tft.setTextColor(ST7735_WHITE);
   tft.setCursor(2, 24);
   tft.println(ROOM_DETAILS[idx]);
+
+  // ----- NEW: Add fixed vertical spacing -----
+  // Ensures percent text never overlaps description
+  int percentY = 108;   // moved lower for safe spacing
+
+  // ----- Booking percentage (big text) -----
+  RoomData& rd = rooms[idx];
+  if (rd.hasTimeline && rd.timelineLen > 0) {
+
+    int bookedSlots = 0;
+    for (int i = 0; i < rd.timelineLen; i++) {
+      if (rd.slotBooked[i]) bookedSlots++;
+    }
+
+    int pct = (bookedSlots * 100 + rd.timelineLen / 2) / rd.timelineLen;
+
+    char buf[32];
+    snprintf(buf, sizeof(buf), "Today: %d%%", pct);
+
+    tft.setTextColor(ST7735_YELLOW);
+    tft.setTextSize(2);
+
+    // Center the text
+    int16_t x1, y1;
+    uint16_t w, h;
+    tft.getTextBounds(buf, 0, 0, &x1, &y1, &w, &h);
+
+    int x = (128 - (int)w) / 2;
+
+    // Use reserved vertical space far below description
+    tft.setCursor(x, percentY);
+    tft.print(buf);
+  }
 }
+
 
 // -----------------------------------------------------------
 // MODE TOGGLE (Bookings ↔ Condition)
@@ -751,7 +786,7 @@ void connectMQTT() {
 void setup() {
   Serial.begin(115200);
   delay(1500);
-  Serial.println("=== UCL Study Space Visualiser v2 (timeline fix) ===");
+  Serial.println("=== UCL Study Space Visualiser v2 (timeline + % booked) ===");
 
   // Rotary encoder
   pinMode(ENC_CLK, INPUT_PULLUP);
