@@ -378,7 +378,7 @@ public class NeoPixelRingController : MonoBehaviour
         try
         {
             string newRoomId = ExtractStringValue(message, "current_room");
-            
+
             if (string.IsNullOrEmpty(newRoomId))
             {
                 Debug.LogWarning("[ROOM] No room ID found in message");
