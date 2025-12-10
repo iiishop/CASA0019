@@ -22,6 +22,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
 #include <Adafruit_NeoPixel.h>
+#include "arduino_secrets.h"
 
 // --------------------------------------------------
 // TFT ST7735
@@ -59,14 +60,8 @@ const unsigned long BUTTON_DEBOUNCE = 180;
 // --------------------------------------------------
 // WIFI + MQTT
 // --------------------------------------------------
-char ssid[] = "Gilang";
-char pass[] = "internetmahal";
 
-const char* MQTT_HOST = "mqtt.cetools.org";
-const uint16_t MQTT_PORT = 1884;
-
-const char* MQTT_USER = "student";
-const char* MQTT_PASS = "ce2021-mqtt-forget-whale";
+// WiFi credentials + MQTT_* come from arduino_secrets.h
 
 const char* MQTT_BASE = "student/CASA0019/Gilang/studyspace";
 
@@ -177,19 +172,41 @@ int roomIndexFromId(const String& id) {
 }
 
 // --------------------------------------------------
-// WIFI CONNECT
+// WIFI CONNECT  (multi-SSID: CE-Hub-Student, then Gilang)
 // --------------------------------------------------
 void connectWiFi() {
-  Serial.print("Connecting to WiFi...");
+  Serial.println("Connecting to WiFi...");
 
-  while (WiFi.begin(ssid, pass) != WL_CONNECTED) {
-    Serial.print(".");
-    delay(500);
+  for (int i = 0; i < numNetworks; i++) {
+    Serial.print("Trying SSID: ");
+    Serial.println(ssids[i]);
+
+    WiFi.begin(ssids[i], passwords[i]);
+    unsigned long startAttempt = millis();
+
+    // Try for ~8 seconds per network
+    while (WiFi.status() != WL_CONNECTED &&
+           millis() - startAttempt < 8000) {
+      Serial.print(".");
+      delay(400);
+    }
+
+    if (WiFi.status() == WL_CONNECTED) {
+      Serial.println("\nConnected!");
+      Serial.print("SSID: ");
+      Serial.println(ssids[i]);
+      Serial.print("IP Address: ");
+      Serial.println(WiFi.localIP());
+      return;  // success
+    }
+
+    Serial.println("\nFailed. Trying next network...");
   }
 
-  Serial.println("\nWiFi connected!");
-  Serial.print("IP: ");
-  Serial.println(WiFi.localIP());
+  // If all networks fail, retry forever
+  Serial.println("All WiFi attempts failed. Retrying...");
+  delay(2000);
+  connectWiFi();
 }
 
 // --------------------------------------------------

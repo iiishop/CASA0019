@@ -10,7 +10,7 @@ import paho.mqtt.client as mqtt
 # ============================
 TOKEN = "uclapi-0ba9562db44f415-1028a0691df6053-a02437e11cd34a2-d47078ea7a18397"
 LOCATION_ID = 3438
-DATE = "2025-12-05"
+DATE = datetime.now().strftime("%Y-%m-%d")
 API_URL = "https://uclapi.com/libcal/space/bookings"
 
 ROOMS = ["24380", "24381", "24382", "24546", "24547"]
