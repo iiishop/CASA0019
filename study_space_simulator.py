@@ -4,11 +4,11 @@ import time
 import random
 from datetime import datetime, timedelta
 import paho.mqtt.client as mqtt
+from secret import TOKEN, MQTT_USERNAME, MQTT_PASSWORD
 
 # ============================
 # CONFIG — CHANGE IF NEEDED
 # ============================
-TOKEN = "uclapi-0ba9562db44f415-1028a0691df6053-a02437e11cd34a2-d47078ea7a18397"
 LOCATION_ID = 3438
 DATE = "2025-12-05"
 API_URL = "https://uclapi.com/libcal/space/bookings"
@@ -21,8 +21,7 @@ SLOT_MINUTES = 30
 
 BROKER_HOST = "mqtt.cetools.org"
 BROKER_PORT = 1884
-MQTT_USERNAME = "student"
-MQTT_PASSWORD = "ce2021-mqtt-forget-whale"
+# MQTT_USERNAME and MQTT_PASSWORD are imported from secret.py
 MQTT_BASE = "student/CASA0019/Gilang/studyspace"
 
 UPDATE_INTERVAL = 60   # seconds

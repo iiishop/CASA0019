@@ -1,2 +1,5 @@
 Doc/*
 Digital Twin/.vscode/
+
+# Secret files containing sensitive information
+secret.py
