@@ -4,3 +4,4 @@ Digital Twin/.vscode/
 # Secret files containing sensitive information
 secret.py
 study_space/arduino_secrets.h
+__pycache__/

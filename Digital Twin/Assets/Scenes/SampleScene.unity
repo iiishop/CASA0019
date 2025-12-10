@@ -93,8 +93,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 20201, guid: 0000000000000000f000000000000000, type: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 7caf400dc92746c4e8aa60852c51a7cd, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: bc0ff85ea0924204184ae05cd2db53d1, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -386,6 +386,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -425,13 +437,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
       propertyPath: m_Name
       value: CASA0019-1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 6315168185153407026, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1079591103}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
 --- !u!1 &832575517
@@ -483,6 +502,120 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1079591101
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1079591103}
+  - component: {fileID: 1079591102}
+  m_Layer: 0
+  m_Name: Neopixels
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1079591102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1079591101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67196800379c8344d9031fe4e1e11e4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ledCount: 24
+  ringRadius: 1
+  lightIntensity: 2
+  lightRange: 0.5
+  mqttManager: {fileID: 1695049614}
+  mqttBaseTopic: student/CASA0019/Gilang/studyspace
+  currentRoomId: 24380
+  timelineMode: 1
+--- !u!4 &1079591103
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1079591101}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.6830128, y: 0.1830127, z: 0.1830127, w: 0.6830128}
+  m_LocalPosition: {x: 0.0000015614205, y: -0.0000020768493, z: 0.015008543}
+  m_LocalScale: {x: 0.03, y: 0.03, z: 0.03}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 1130862208}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &1130862208 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6315168185153407026, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
+  m_PrefabInstance: {fileID: 451136090}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1695049613
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1695049615}
+  - component: {fileID: 1695049614}
+  m_Layer: 0
+  m_Name: mqttManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1695049614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1695049613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0895fddd076302c4bb665570e373dc0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  brokerAddress: mqtt.cetools.org
+  brokerPort: 1884
+  isEncrypted: 0
+  certificateName: 
+  connectionDelay: 500
+  timeoutOnConnection: 30000
+  autoConnect: 0
+  mqttUserName: student
+  mqttPassword: ce2021-mqtt-forget-whale
+  topicSubscribe: []
+  topicPublish: 
+  messagePublish: 
+  autoTest: 0
+--- !u!4 &1695049615
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1695049613}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.9548925, y: 6.882683, z: -1.109428}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -491,3 +624,4 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 451136090}
+  - {fileID: 1695049615}

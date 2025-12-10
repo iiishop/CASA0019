@@ -698,7 +698,7 @@ void showRoomDetails(int idx)
 
   // ----- NEW: Add fixed vertical spacing -----
   // Ensures percent text never overlaps description
-  int percentY = 108; // moved lower for safe spacing
+  int percentY = 116; // moved lower to avoid overlapping with wrapped text (was 108)
 
   // ----- Booking percentage (big text) -----
   RoomData &rd = rooms[idx];
