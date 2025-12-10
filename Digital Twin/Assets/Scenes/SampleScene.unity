@@ -451,8 +451,44 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6315168185153407026, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1079591103}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: -4235621792350807796, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 651069021}
   m_SourcePrefab: {fileID: 100100000, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
+--- !u!1 &651069017 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -4235621792350807796, guid: fce321a22def90e4c8bdec8cfa1cabc1, type: 3}
+  m_PrefabInstance: {fileID: 451136090}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &651069021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 651069017}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc8078dea423708499e1f2c775f8de06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stepsPerRotation: 24
+  rotationSpeed: 360
+  pressDuration: 0.2
+  pressDepth: 0.05
+  knobVisual: {fileID: 0}
+  mqttManager: {fileID: 1695049614}
+  enablePhysicalSync: 1
+  OnRotateClockwise:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRotateCounterClockwise:
+    m_PersistentCalls:
+      m_Calls: []
+  OnButtonPress:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

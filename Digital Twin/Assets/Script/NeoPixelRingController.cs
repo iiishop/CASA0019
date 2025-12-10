@@ -285,7 +285,7 @@ public class NeoPixelRingController : MonoBehaviour
 
             string arrayContent = json.Substring(arrayStart + 1, arrayEnd - arrayStart - 1);
             Debug.Log($"[PARSE] Array content extracted: {arrayContent.Substring(0, Mathf.Min(50, arrayContent.Length))}...");
-            
+
             string[] slots = arrayContent.Split(',');
             Debug.Log($"[PARSE] Split into {slots.Length} slots");
 

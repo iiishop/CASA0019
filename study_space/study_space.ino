@@ -930,6 +930,7 @@ void connectMQTT()
       Serial.println(timelineTopic);
       Serial.print("Subscribed → ");
       Serial.println(statusTopic);
+      Serial.println("[ENCODER] Ready to publish to student/CASA0019/Gilang/encoder");
     }
     else
     {
@@ -994,15 +995,27 @@ void loop()
     if (currentClk == LOW)
     {
       // Direction
-      if (digitalRead(ENC_DT) != currentClk)
+      bool clockwise = (digitalRead(ENC_DT) != currentClk);
+
+      if (clockwise)
       {
         selectedRoom = (selectedRoom + 1) % ROOM_COUNT;
+
+        // Publish MQTT event for clockwise rotation
+        String payload = "{\"encoder\":\"rotation\",\"direction\":\"cw\"}";
+        mqttClient.publish("student/CASA0019/Gilang/encoder", payload.c_str());
+        Serial.println("[ENCODER] Published: CW rotation");
       }
       else
       {
         selectedRoom--;
         if (selectedRoom < 0)
           selectedRoom = ROOM_COUNT - 1;
+
+        // Publish MQTT event for counter-clockwise rotation
+        String payload = "{\"encoder\":\"rotation\",\"direction\":\"ccw\"}";
+        mqttClient.publish("student/CASA0019/Gilang/encoder", payload.c_str());
+        Serial.println("[ENCODER] Published: CCW rotation");
       }
 
       Serial.print("Room → ");
@@ -1049,6 +1062,11 @@ void loop()
     lastButton = b;
     if (b == LOW)
     {
+      // Publish MQTT event for button press
+      String payload = "{\"encoder\":\"button\",\"pressed\":true}";
+      mqttClient.publish("student/CASA0019/Gilang/encoder", payload.c_str());
+      Serial.println("[ENCODER] Published: Button pressed");
+
       toggleMode();
     }
   }

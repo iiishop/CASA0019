@@ -89,6 +89,7 @@ public class mqttManager : M2MqttUnityClient
         {
             topicSubscribe.Add("student/CASA0019/Gilang/studyspace/+/timeline");
             topicSubscribe.Add("student/CASA0019/Gilang/studyspace/+/status");
+            topicSubscribe.Add("student/CASA0019/Gilang/encoder"); // Physical encoder events
         }
 
         // Enable auto-connect
