@@ -87,6 +87,8 @@ public class mqttManager : M2MqttUnityClient
         // Set default topics if list is empty
         if (topicSubscribe.Count == 0)
         {
+            topicSubscribe.Add("student/CASA0019/Gilang/studyspace/current"); // Current room topic
+            topicSubscribe.Add("student/CASA0019/Gilang/studyspace/mode"); // Display mode topic
             topicSubscribe.Add("student/CASA0019/Gilang/studyspace/+/timeline");
             topicSubscribe.Add("student/CASA0019/Gilang/studyspace/+/status");
             topicSubscribe.Add("student/CASA0019/Gilang/encoder"); // Physical encoder events
@@ -132,8 +134,13 @@ public class mqttManager : M2MqttUnityClient
 
     public void Publish()
     {
-        client.Publish(topicPublish, System.Text.Encoding.UTF8.GetBytes(messagePublish), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, false);
-        Debug.Log("Test message published");
+        Publish(true); // Default to retained
+    }
+
+    public void Publish(bool retain)
+    {
+        client.Publish(topicPublish, System.Text.Encoding.UTF8.GetBytes(messagePublish), MqttMsgBase.QOS_LEVEL_EXACTLY_ONCE, retain);
+        Debug.Log($"Message published (retained={retain})");
     }
     public void SetEncrypted(bool isEncrypted)
     {

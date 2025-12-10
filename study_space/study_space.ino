@@ -62,6 +62,8 @@ bool lastButton = HIGH;
 unsigned long lastButtonTime = 0;
 const unsigned long BUTTON_DEBOUNCE = 180;
 
+unsigned long lastModePublishTime = 0; // Track when we published mode (for future use if needed)
+
 // --------------------------------------------------
 // WIFI + MQTT
 // --------------------------------------------------
@@ -760,6 +762,15 @@ void toggleMode()
   Serial.print("MODE = ");
   Serial.println(timelineMode ? "BOOKINGS" : "CONDITION");
 
+  // Publish mode change to MQTT (retained)
+  String modePayload = "{\"mode\":\"";
+  modePayload += timelineMode ? "bookings" : "condition";
+  modePayload += "\"}";
+  mqttClient.publish("student/CASA0019/Gilang/studyspace/mode", modePayload.c_str(), true);
+  lastModePublishTime = millis(); // Record publish time to ignore our own message
+  Serial.print("[MODE] Published mode (retained): ");
+  Serial.println(timelineMode ? "bookings" : "condition");
+
   if (timelineMode)
   {
     // BOOKINGS MODE
@@ -819,20 +830,79 @@ void mqttCallback(char *topic, byte *payload, unsigned int length)
   bool isTimeline = doc.containsKey("timeline");
   bool isStatus = doc.containsKey("state");
   bool isEncoderButton = doc.containsKey("encoder") && doc["encoder"] == "button";
+  bool isModeChange = doc.containsKey("mode");
 
   Serial.print("isTimeline=");
   Serial.print(isTimeline);
   Serial.print(" isStatus=");
   Serial.print(isStatus);
   Serial.print(" isEncoderButton=");
-  Serial.println(isEncoderButton);
+  Serial.print(isEncoderButton);
+  Serial.print(" isModeChange=");
+  Serial.println(isModeChange);
 
-  // --- HANDLE ENCODER BUTTON (MODE TOGGLE) ---
+  // --- HANDLE MODE CHANGE FROM MQTT ---
+  if (isModeChange)
+  {
+    String remoteMode = doc["mode"].as<String>();
+    bool remoteModeIsBookings = (remoteMode == "bookings");
+
+    Serial.print("[MQTT] Mode message received: ");
+    Serial.println(remoteMode);
+
+    // Only update if mode is different (avoid unnecessary redraws)
+    if (remoteModeIsBookings != timelineMode)
+    {
+      Serial.print("[MQTT] 🔄 Mode changing from ");
+      Serial.print(timelineMode ? "bookings" : "condition");
+      Serial.print(" to ");
+      Serial.println(remoteMode);
+      timelineMode = remoteModeIsBookings;
+
+      // Update display without publishing (to avoid message loop)
+      if (timelineMode)
+      {
+        showRoomDetails(selectedRoom);
+        if (rooms[selectedRoom].hasTimeline)
+        {
+          renderTimeline(selectedRoom);
+        }
+        else
+        {
+          clearStrip();
+        }
+      }
+      else
+      {
+        drawHeader(selectedRoom);
+        if (rooms[selectedRoom].hasStatus)
+        {
+          drawStateIcon(rooms[selectedRoom].state);
+          computeAttrTarget(rooms[selectedRoom], currentAttr);
+        }
+        else
+        {
+          iconNeutral();
+        }
+        clearStrip();
+      }
+
+      Serial.println("[MQTT] ✓ Mode update complete");
+    }
+    else
+    {
+      Serial.println("[MQTT] Mode unchanged, skipping update");
+    }
+    return;
+  }
+
+  // --- HANDLE ENCODER BUTTON (for logging/info only) ---
+  // Button presses are now handled via mode messages, not button messages
   if (isEncoderButton && doc["pressed"] == true)
   {
-    Serial.println("[MQTT] 🎮 Encoder button pressed via MQTT - toggling mode");
-    toggleMode();
-    return; // Early return, no room processing needed
+    Serial.println("[MQTT] 📝 Button press event received (informational only)");
+    // Mode changes are handled via mode topic, so just log and return
+    return;
   }
 
   // Determine room id
@@ -955,12 +1025,18 @@ void connectMQTT()
       String encoderTopic = "student/CASA0019/Gilang/encoder";
       mqttClient.subscribe(encoderTopic.c_str());
 
+      // Mode topic for mode synchronization
+      String modeTopic = "student/CASA0019/Gilang/studyspace/mode";
+      mqttClient.subscribe(modeTopic.c_str());
+
       Serial.print("Subscribed → ");
       Serial.println(timelineTopic);
       Serial.print("Subscribed → ");
       Serial.println(statusTopic);
       Serial.print("Subscribed → ");
       Serial.println(encoderTopic);
+      Serial.print("Subscribed → ");
+      Serial.println(modeTopic);
       Serial.println("[ENCODER] Ready for bidirectional MQTT sync");
     }
     else
@@ -1003,11 +1079,16 @@ void setup()
   connectWiFi();
   connectMQTT();
 
-  // Publish initial room state for Unity
+  // Publish initial room state for Unity (retained)
   String roomPayload = "{\"current_room\":\"" + String(ROOM_IDS[selectedRoom]) + "\"}";
-  mqttClient.publish("student/CASA0019/Gilang/studyspace/current", roomPayload.c_str());
-  Serial.print("[ROOM] Published initial room: ");
+  mqttClient.publish("student/CASA0019/Gilang/studyspace/current", roomPayload.c_str(), true);
+  Serial.print("[ROOM] Published initial room (retained): ");
   Serial.println(ROOM_IDS[selectedRoom]);
+
+  // Publish initial mode state (retained)
+  String modePayload = "{\"mode\":\"bookings\"}";
+  mqttClient.publish("student/CASA0019/Gilang/studyspace/mode", modePayload.c_str(), true);
+  Serial.println("[MODE] Published initial mode (retained): bookings");
 
   // Initial screen (Bookings mode)
   showRoomDetails(selectedRoom);
@@ -1038,10 +1119,10 @@ void loop()
       {
         selectedRoom = (selectedRoom + 1) % ROOM_COUNT;
 
-        // Publish MQTT event for clockwise rotation
+        // Publish MQTT event for clockwise rotation (retained)
         String payload = "{\"encoder\":\"rotation\",\"direction\":\"cw\"}";
-        mqttClient.publish("student/CASA0019/Gilang/encoder", payload.c_str());
-        Serial.println("[ENCODER] Published: CW rotation");
+        mqttClient.publish("student/CASA0019/Gilang/encoder", payload.c_str(), true);
+        Serial.println("[ENCODER] Published: CW rotation (retained)");
 
         // Publish current room change
         String roomPayload = "{\"current_room\":\"" + String(ROOM_IDS[selectedRoom]) + "\"}";
@@ -1055,10 +1136,10 @@ void loop()
         if (selectedRoom < 0)
           selectedRoom = ROOM_COUNT - 1;
 
-        // Publish MQTT event for counter-clockwise rotation
+        // Publish MQTT event for counter-clockwise rotation (retained)
         String payload = "{\"encoder\":\"rotation\",\"direction\":\"ccw\"}";
-        mqttClient.publish("student/CASA0019/Gilang/encoder", payload.c_str());
-        Serial.println("[ENCODER] Published: CCW rotation");
+        mqttClient.publish("student/CASA0019/Gilang/encoder", payload.c_str(), true);
+        Serial.println("[ENCODER] Published: CCW rotation (retained)");
 
         // Publish current room change
         String roomPayload = "{\"current_room\":\"" + String(ROOM_IDS[selectedRoom]) + "\"}";
@@ -1073,31 +1154,23 @@ void loop()
       Serial.print(ROOM_NAMES[selectedRoom]);
       Serial.println(")");
 
+      // Clear existing data for the new room to force fresh data fetch
+      rooms[selectedRoom].hasTimeline = false;
+      rooms[selectedRoom].hasStatus = false;
+
+      // Show loading state
       if (timelineMode)
       {
         showRoomDetails(selectedRoom);
-        if (rooms[selectedRoom].hasTimeline)
-        {
-          renderTimeline(selectedRoom);
-        }
-        else
-        {
-          clearStrip();
-        }
+        clearStrip();
+        Serial.println("[ROOM] Waiting for fresh timeline data from UCL API...");
       }
       else
       {
         drawHeader(selectedRoom);
-        if (rooms[selectedRoom].hasStatus)
-        {
-          drawStateIcon(rooms[selectedRoom].state);
-          computeAttrTarget(rooms[selectedRoom], currentAttr);
-        }
-        else
-        {
-          iconNeutral();
-        }
+        iconNeutral();
         clearStrip();
+        Serial.println("[ROOM] Waiting for fresh status data from UCL API...");
       }
     }
     lastClk = currentClk;
@@ -1111,13 +1184,25 @@ void loop()
     lastButton = b;
     if (b == LOW)
     {
-      // Publish MQTT event for button press (don't toggle mode directly)
-      String payload = "{\"encoder\":\"button\",\"pressed\":true}";
-      mqttClient.publish("student/CASA0019/Gilang/encoder", payload.c_str());
-      Serial.println("[ENCODER] Published: Button pressed");
+      Serial.println("[ENCODER] Physical button pressed");
 
-      // NOTE: Mode toggle now happens via MQTT callback
-      // This allows Unity virtual button to trigger Arduino display mode change
+      // Calculate new mode
+      bool newTimelineMode = !timelineMode;
+      String newMode = newTimelineMode ? "bookings" : "condition";
+
+      // Publish mode change to MQTT (retained)
+      // This will trigger mode update on both Arduino (via callback) and Unity
+      String modePayload = "{\"mode\":\"" + newMode + "\"}";
+      mqttClient.publish("student/CASA0019/Gilang/studyspace/mode", modePayload.c_str(), true);
+      lastModePublishTime = millis(); // Record publish time
+
+      Serial.print("[ENCODER] Published mode change (retained): ");
+      Serial.println(newMode);
+      Serial.println("[ENCODER] Waiting for mode callback to update display...");
+
+      // Optional: Also publish button event for logging/analytics
+      String buttonPayload = "{\"encoder\":\"button\",\"pressed\":true}";
+      mqttClient.publish("student/CASA0019/Gilang/encoder", buttonPayload.c_str(), false);
     }
   }
 

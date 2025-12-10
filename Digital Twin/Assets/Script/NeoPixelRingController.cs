@@ -251,6 +251,14 @@ public class NeoPixelRingController : MonoBehaviour
             return;
         }
 
+        // Handle mode change message
+        if (topic.EndsWith("/mode"))
+        {
+            Debug.Log("[MQTT] Processing MODE CHANGE message");
+            ParseModeChangeMessage(message);
+            return;
+        }
+
         // Parse JSON message
         if (topic.EndsWith("/timeline"))
         {
@@ -265,6 +273,71 @@ public class NeoPixelRingController : MonoBehaviour
         else
         {
             Debug.LogWarning($"[MQTT] Unknown topic format: {topic}");
+        }
+    }
+
+    /// <summary>
+    /// Parse mode change JSON message
+    /// </summary>
+    void ParseModeChangeMessage(string json)
+    {
+        Debug.Log("[MODE] Starting to parse mode change message...");
+        try
+        {
+            // Expected format: {"mode": "bookings"} or {"mode": "condition"}
+            string mode = ExtractStringValue(json, "mode");
+
+            if (string.IsNullOrEmpty(mode))
+            {
+                Debug.LogWarning("[MODE] Failed to extract mode from message");
+                return;
+            }
+
+            Debug.Log($"[MODE] Extracted mode = '{mode}'");
+
+            bool newTimelineMode = (mode == "bookings");
+
+            if (newTimelineMode != timelineMode)
+            {
+                Debug.Log($"[MODE] 🔄 Mode changed from {(timelineMode ? "bookings" : "condition")} to {mode}");
+                timelineMode = newTimelineMode;
+
+                // Update display based on new mode
+                if (timelineMode)
+                {
+                    Debug.Log("[MODE] Switching to BOOKINGS mode");
+                    if (hasTimelineData)
+                    {
+                        RenderTimeline();
+                    }
+                    else
+                    {
+                        ClearAllLights();
+                    }
+                }
+                else
+                {
+                    Debug.Log("[MODE] Switching to CONDITION mode");
+                    if (hasStatusData)
+                    {
+                        ComputeAttrTarget(currentAttr);
+                        ClearAllLights();
+                        currentLEDCount = 0;
+                    }
+                    else
+                    {
+                        ClearAllLights();
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log($"[MODE] Mode unchanged: {mode}");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"[MODE] Error parsing mode message: {e.Message}");
         }
     }
 
@@ -635,6 +708,16 @@ public class NeoPixelRingController : MonoBehaviour
         timelineMode = !timelineMode;
 
         Debug.Log($"Mode switched to: {(timelineMode ? "BOOKINGS" : "CONDITION")}");
+
+        // Publish mode change to MQTT (retained)
+        if (mqttManager != null && mqttManager.isConnected)
+        {
+            string mode = timelineMode ? "bookings" : "condition";
+            mqttManager.topicPublish = "student/CASA0019/Gilang/studyspace/mode";
+            mqttManager.messagePublish = $"{{\"mode\":\"{mode}\"}}";
+            mqttManager.Publish(true); // true = retained
+            Debug.Log($"[MODE] Published mode (retained): {mode}");
+        }
 
         if (timelineMode && hasTimelineData)
         {

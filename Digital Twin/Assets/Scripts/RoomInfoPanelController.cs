@@ -1,438 +1,395 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-using System.Collections.Generic;
+
+[Serializable]
+public class CurrentRoomData
+{
+    public string current_room;
+}
+
+[Serializable]
+public class TimelineData
+{
+    public string room;
+    public List<string> timeline;
+}
+
+[Serializable]
+public class StatusData
+{
+    public string timestamp;
+    public string room;
+    public float occupancy;
+    public float noise;
+    public float temperature;
+    public float light;
+    public string state;
+}
 
 public class RoomInfoPanelController : MonoBehaviour
 {
-    [Header("UI Document")]
-    [SerializeField] private UIDocument uiDocument;
+    private UIDocument uiDocument;
+    private VisualElement rootElement;
 
-    [Header("MQTT Manager")]
-    private mqttManager mqttManager;
-
-    // UI Elements
+    // UI元素引用
     private Label roomNumberLabel;
     private Label roomNameLabel;
     private Label bookingPercentageLabel;
-    private VisualElement timelineContainer;
-    private Label statusIndicator;
-    private Label statusText;
     private VisualElement bookedBar;
     private VisualElement freeBar;
+    private VisualElement timelineContainer;
+    private Label statusText;
+    private Label statusIndicator;
 
-    // Room data
-    private string currentRoomId = "24380";
-    private Dictionary<string, string> roomNames;
-    private int[] timelineData = new int[24]; // 0=free, 1=booked
+    // MQTT Manager引用
+    private mqttManager mqttManager;
+
+    // 当前房间号
+    private string currentRoom = "";
+
+    // 房间名称映射(可以根据实际情况扩展)
+    private Dictionary<string, string> roomNames = new Dictionary<string, string>()
+    {
+        { "24380", "Single Study Pod 216" },
+        { "24381", "Group Study Room A" },
+        { "24382", "Quiet Study Area" },
+        { "24383", "Collaboration Space" }
+    };
 
     void Start()
     {
-        Debug.LogWarning("🔧 RoomInfoPanelController Start() called");
+        // 初始化UI
+        InitializeUI();
 
-        // Find mqttManager by tag
-        GameObject mqttManagerObj = GameObject.FindGameObjectWithTag("mqttmanager");
-        if (mqttManagerObj != null)
+        // 查找并连接MQTT Manager
+        ConnectToMqttManager();
+    }
+
+    private void InitializeUI()
+    {
+        uiDocument = GetComponent<UIDocument>();
+        if (uiDocument == null)
         {
-            Debug.LogWarning($"✅ Found mqttmanager GameObject: {mqttManagerObj.name}");
-            mqttManager = mqttManagerObj.GetComponent<mqttManager>();
-            if (mqttManager != null)
-            {
-                mqttManager.OnMessageArrived += HandleMqttMessage;
-                Debug.LogWarning("✅ RoomInfoPanelController: Successfully subscribed to OnMessageArrived event");
-            }
-            else
-            {
-                Debug.LogError("❌ mqttManager component not found on tagged object!");
-            }
+            Debug.LogError("[RoomInfoPanelController] UIDocument component not found!");
+            return;
+        }
+
+        rootElement = uiDocument.rootVisualElement;
+
+        // 获取UI元素引用
+        roomNumberLabel = rootElement.Q<Label>("RoomNumber");
+        roomNameLabel = rootElement.Q<Label>("RoomName");
+        bookingPercentageLabel = rootElement.Q<Label>("BookingPercentage");
+        bookedBar = rootElement.Q<VisualElement>("BookedBar");
+        freeBar = rootElement.Q<VisualElement>("FreeBar");
+        timelineContainer = rootElement.Q<VisualElement>("TimelineContainer");
+        statusText = rootElement.Q<Label>("StatusText");
+        statusIndicator = rootElement.Q<Label>("StatusIndicator");
+
+        // 设置初始状态
+        UpdateStatusUI("Connecting to MQTT...", false);
+
+        Debug.Log("[RoomInfoPanelController] UI initialized");
+    }
+
+    private void ConnectToMqttManager()
+    {
+        // 通过Tag查找MQTT Manager
+        GameObject mqttManagerObj = GameObject.FindGameObjectWithTag("mqttmanager");
+
+        if (mqttManagerObj == null)
+        {
+            Debug.LogError("[RoomInfoPanelController] MQTT Manager object with tag 'mqttmanager' not found!");
+            UpdateStatusUI("MQTT Manager not found", false);
+            return;
+        }
+
+        mqttManager = mqttManagerObj.GetComponent<mqttManager>();
+
+        if (mqttManager == null)
+        {
+            Debug.LogError("[RoomInfoPanelController] mqttManager component not found on the object!");
+            UpdateStatusUI("MQTT Manager component missing", false);
+            return;
+        }
+
+        // 订阅MQTT事件
+        mqttManager.OnMessageArrived += HandleMqttMessage;
+        mqttManager.OnConnectionSucceeded += HandleConnectionStatus;
+
+        // 订阅current主题
+        SubscribeToCurrentTopic();
+
+        Debug.Log("[RoomInfoPanelController] Connected to MQTT Manager");
+    }
+
+    private void SubscribeToCurrentTopic()
+    {
+        string currentTopic = "student/CASA0019/Gilang/studyspace/current";
+
+        // 如果主题不在订阅列表中,添加它
+        if (!mqttManager.topicSubscribe.Contains(currentTopic))
+        {
+            mqttManager.topicSubscribe.Add(currentTopic);
+            Debug.Log($"[RoomInfoPanelController] Added subscription to: {currentTopic}");
+        }
+    }
+
+    private void HandleConnectionStatus(bool connected)
+    {
+        if (connected)
+        {
+            UpdateStatusUI("Connected - Waiting for data...", true);
+            Debug.Log("[RoomInfoPanelController] MQTT connected");
         }
         else
         {
-            Debug.LogError("❌ GameObject with tag 'mqttmanager' not found!");
+            UpdateStatusUI("Disconnected", false);
+            Debug.Log("[RoomInfoPanelController] MQTT disconnected");
+        }
+    }
+
+    private void HandleMqttMessage(mqttObj mqttObject)
+    {
+        string topic = mqttObject.topic;
+        string message = mqttObject.msg;
+
+        Debug.Log($"[RoomInfoPanelController] Received message from {topic}: {message}");
+
+        try
+        {
+            // 处理current主题
+            if (topic == "student/CASA0019/Gilang/studyspace/current")
+            {
+                HandleCurrentRoomMessage(message);
+            }
+            // 处理timeline主题
+            else if (topic.Contains("/timeline"))
+            {
+                HandleTimelineMessage(message);
+            }
+            // 处理status主题(预留,暂时不用)
+            else if (topic.Contains("/status"))
+            {
+                HandleStatusMessage(message);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[RoomInfoPanelController] Error handling message: {e.Message}");
+        }
+    }
+
+    private void HandleCurrentRoomMessage(string jsonMessage)
+    {
+        try
+        {
+            CurrentRoomData data = JsonUtility.FromJson<CurrentRoomData>(jsonMessage);
+
+            if (data != null && !string.IsNullOrEmpty(data.current_room))
+            {
+                string newRoom = data.current_room;
+
+                // 如果房间改变,更新UI
+                // 注意: 不需要重新订阅,因为mqttManager已通过通配符(+)订阅了所有房间
+                if (newRoom != currentRoom)
+                {
+                    currentRoom = newRoom;
+                    UpdateRoomInfo(currentRoom);
+                    SubscribeToRoomTopics(currentRoom); // 仅用于日志记录
+
+                    Debug.Log($"[RoomInfoPanelController] Current room changed to: {currentRoom}");
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[RoomInfoPanelController] Error parsing current room data: {e.Message}");
+        }
+    }
+
+    private void SubscribeToRoomTopics(string roomNumber)
+    {
+        // 注意: mqttManager已经通过通配符订阅了所有房间的timeline和status
+        // student/CASA0019/Gilang/studyspace/+/timeline
+        // student/CASA0019/Gilang/studyspace/+/status
+        // 因此不需要动态订阅，只需等待该房间的数据到达即可
+
+        Debug.Log($"[RoomInfoPanelController] Switched to room {roomNumber}, waiting for timeline/status data...");
+        Debug.Log($"[RoomInfoPanelController] (Already subscribed via wildcard topics)");
+    }
+
+    private void HandleTimelineMessage(string jsonMessage)
+    {
+        try
+        {
+            TimelineData data = JsonUtility.FromJson<TimelineData>(jsonMessage);
+
+            if (data != null && data.timeline != null && data.timeline.Count > 0)
+            {
+                // 只更新当前房间的数据
+                if (data.room == currentRoom)
+                {
+                    UpdateBookingTimeline(data.timeline);
+                    UpdateStatusUI($"Room {currentRoom} - Data updated", true);
+
+                    Debug.Log($"[RoomInfoPanelController] Timeline updated for room {data.room}");
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[RoomInfoPanelController] Error parsing timeline data: {e.Message}");
+        }
+    }
+
+    private void HandleStatusMessage(string jsonMessage)
+    {
+        // 暂时不使用status数据,但保留解析逻辑以备后用
+        try
+        {
+            StatusData data = JsonUtility.FromJson<StatusData>(jsonMessage);
+
+            if (data != null && data.room == currentRoom)
+            {
+                Debug.Log($"[RoomInfoPanelController] Status data received for room {data.room}: " +
+                         $"Occupancy={data.occupancy}%, Noise={data.noise}dB, " +
+                         $"Temp={data.temperature}°C, Light={data.light}lux, State={data.state}");
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[RoomInfoPanelController] Error parsing status data: {e.Message}");
+        }
+    }
+
+    private void UpdateRoomInfo(string roomNumber)
+    {
+        // 更新房间号
+        if (roomNumberLabel != null)
+        {
+            roomNumberLabel.text = roomNumber;
         }
 
-        // Initialize room names mapping
-        InitializeRoomNames();
-
-        // Get UI elements
-        InitializeUIElements();
-
-        // Initialize timeline slots (24 slots for 9:00-21:00)
-        CreateTimelineSlots();
-
-        // Set initial room display
-        UpdateRoomDisplay(currentRoomId);
+        // 更新房间名称
+        if (roomNameLabel != null)
+        {
+            string roomName = roomNames.ContainsKey(roomNumber)
+                ? roomNames[roomNumber]
+                : "Study Room";
+            roomNameLabel.text = roomName;
+        }
     }
 
-    void InitializeRoomNames()
+    private void UpdateBookingTimeline(List<string> timeline)
     {
-        roomNames = new Dictionary<string, string>
+        if (timeline == null || timeline.Count == 0)
         {
-            { "24380", "Single Study Pod 216" },
-            { "24381", "Single Study Pod 212" },
-            { "24382", "4-Seater Study Pod 213" },
-            { "24546", "4-Seater Study Pod 217" },
-            { "24547", "8-Seater Study Pod 218" }
-        };
-    }
-
-    void InitializeUIElements()
-    {
-        if (uiDocument == null)
-        {
-            Debug.LogError("❌ UIDocument is not assigned!");
+            Debug.LogWarning("[RoomInfoPanelController] Empty timeline data");
             return;
         }
 
-        VisualElement root = uiDocument.rootVisualElement;
-
-        roomNumberLabel = root.Q<Label>("RoomNumber");
-        roomNameLabel = root.Q<Label>("RoomName");
-        bookingPercentageLabel = root.Q<Label>("BookingPercentage");
-        timelineContainer = root.Q<VisualElement>("TimelineContainer");
-        statusIndicator = root.Q<Label>("StatusIndicator");
-        statusText = root.Q<Label>("StatusText");
-        bookedBar = root.Q<VisualElement>("BookedBar");
-        freeBar = root.Q<VisualElement>("FreeBar");
-
-        Debug.Log("✅ UI Elements initialized");
-    }
-
-    void CreateTimelineSlots()
-    {
-        if (timelineContainer == null)
+        // 计算预定百分比
+        int bookedCount = 0;
+        foreach (string slot in timeline)
         {
-            Debug.LogError("❌ Timeline container not found!");
-            return;
+            if (slot.ToLower() == "booked")
+            {
+                bookedCount++;
+            }
         }
 
+        float bookedPercentage = (float)bookedCount / timeline.Count * 100f;
+
+        // 更新百分比标签
+        if (bookingPercentageLabel != null)
+        {
+            bookingPercentageLabel.text = $"{bookedPercentage:F0}%";
+        }
+
+        // 更新预定条
+        if (bookedBar != null && freeBar != null)
+        {
+            bookedBar.style.width = Length.Percent(bookedPercentage);
+            freeBar.style.width = Length.Percent(100f - bookedPercentage);
+        }
+
+        // 更新时间线显示
+        UpdateTimelineVisual(timeline);
+    }
+
+    private void UpdateTimelineVisual(List<string> timeline)
+    {
+        if (timelineContainer == null) return;
+
+        // 清空现有时间线
         timelineContainer.Clear();
 
-        // Create 24 slots (9:00 - 21:00, 30-minute intervals)
-        for (int i = 0; i < 24; i++)
+        // 时间线从9:00到21:00,共24个时间槽(每个30分钟)
+        // timeline数组应该有24个元素
+        for (int i = 0; i < timeline.Count && i < 24; i++)
         {
             VisualElement slot = new VisualElement();
-            slot.name = $"TimelineSlot_{i}";
             slot.AddToClassList("timeline-slot");
-            slot.AddToClassList("free"); // Default state
 
-            // Add tooltip with time
-            string time = GetTimeForSlot(i);
-            slot.tooltip = time;
+            // 根据状态设置样式
+            string status = timeline[i].ToLower();
+            if (status == "booked")
+            {
+                slot.AddToClassList("timeline-booked");
+            }
+            else
+            {
+                slot.AddToClassList("timeline-free");
+            }
+
+            // 添加tooltip显示时间
+            int hour = 9 + (i / 2);
+            int minute = (i % 2) * 30;
+            slot.tooltip = $"{hour:D2}:{minute:D2} - {status}";
 
             timelineContainer.Add(slot);
         }
 
-        Debug.Log("✅ Created 24 timeline slots");
+        Debug.Log($"[RoomInfoPanelController] Timeline visual updated with {timeline.Count} slots");
     }
 
-    string GetTimeForSlot(int index)
+    private void UpdateStatusUI(string message, bool connected)
     {
-        int hour = 9 + (index / 2);
-        int minute = (index % 2) * 30;
-        return $"{hour:D2}:{minute:D2}";
-    }
-
-    void HandleMqttMessage(mqttObj message)
-    {
-        string topic = message.topic;
-        string payload = message.msg;
-
-        Debug.LogWarning($"🔔 MQTT Message Received:\n  Topic: {topic}\n  Payload: {payload}");
-
-        // Handle current room change
-        if (topic == "student/CASA0019/Gilang/studyspace/current")
+        if (statusText != null)
         {
-            Debug.LogWarning($"📍 Processing current room topic");
-            string newRoomId = ExtractStringValue(payload, "current_room");
-            Debug.LogWarning($"📍 Extracted room ID: '{newRoomId}', Current room: '{currentRoomId}'");
-
-            if (string.IsNullOrEmpty(newRoomId))
-            {
-                Debug.LogWarning("⚠️ Failed to extract room ID from payload!");
-            }
-            else if (newRoomId != currentRoomId)
-            {
-                currentRoomId = newRoomId;
-                UpdateRoomDisplay(currentRoomId);
-                ClearTimelineData();
-                Debug.Log($"✅ Room changed to: {currentRoomId}");
-            }
-            else
-            {
-                Debug.LogWarning($"⚠️ Room ID unchanged: {currentRoomId}");
-            }
-        }
-        // Handle timeline data
-        else if (topic.Contains("/timeline"))
-        {
-            Debug.LogWarning($"📊 Processing timeline topic");
-            string messageRoomId = ExtractStringValue(payload, "room");
-            Debug.LogWarning($"📊 Timeline room ID: '{messageRoomId}', Current room: '{currentRoomId}'");
-
-            if (string.IsNullOrEmpty(messageRoomId))
-            {
-                Debug.LogWarning("⚠️ Failed to extract room ID from timeline payload!");
-            }
-            else if (messageRoomId == currentRoomId)
-            {
-                Debug.LogWarning($"✅ Timeline data matches current room, parsing...");
-                ParseTimelineData(payload);
-                UpdateConnectionStatus(true);
-            }
-            else
-            {
-                Debug.LogWarning($"⚠️ Timeline room mismatch: got '{messageRoomId}', expected '{currentRoomId}'");
-            }
-        }
-        // Handle status/condition data (just log it for now)
-        else if (topic.Contains("/status"))
-        {
-            Debug.LogWarning($"🌡️ Processing status topic");
-            string messageRoomId = ExtractStringValue(payload, "room");
-            Debug.LogWarning($"🌡️ Status room ID: '{messageRoomId}', Current room: '{currentRoomId}'");
-
-            if (string.IsNullOrEmpty(messageRoomId))
-            {
-                Debug.LogWarning("⚠️ Failed to extract room ID from status payload!");
-            }
-            else if (messageRoomId == currentRoomId)
-            {
-                Debug.LogWarning($"✅ Status data matches current room (condition data received)");
-                // Note: This panel focuses on bookings/timeline only
-                // Status data could be used for additional features in the future
-            }
-            else
-            {
-                Debug.LogWarning($"⚠️ Status room mismatch: got '{messageRoomId}', expected '{currentRoomId}'");
-            }
-        }
-        // Handle encoder messages (rotation/button)
-        else if (topic.Contains("/encoder"))
-        {
-            Debug.LogWarning($"🎮 Processing encoder topic (rotation/button events)");
-            // These messages are handled by other controllers
-        }
-        else
-        {
-            Debug.LogWarning($"⚠️ Unhandled topic: {topic}");
-        }
-    }
-
-    void UpdateRoomDisplay(string roomId)
-    {
-        if (roomNumberLabel != null)
-        {
-            roomNumberLabel.text = roomId;
+            statusText.text = message;
         }
 
-        if (roomNameLabel != null && roomNames.ContainsKey(roomId))
+        if (statusIndicator != null)
         {
-            roomNameLabel.text = roomNames[roomId];
-        }
-    }
-
-    void ParseTimelineData(string json)
-    {
-        Debug.LogWarning($"🔍 Parsing timeline data from JSON: {json}");
-
-        // Reset timeline data
-        for (int i = 0; i < 24; i++)
-        {
-            timelineData[i] = 0;
-        }
-
-        // Extract timeline array - support both formats with/without space
-        string searchKey1 = "\"timeline\":[";
-        string searchKey2 = "\"timeline\": [";
-        
-        int keyStartIndex = json.IndexOf(searchKey1);
-        int keyLength = searchKey1.Length;
-        
-        if (keyStartIndex == -1)
-        {
-            keyStartIndex = json.IndexOf(searchKey2);
-            keyLength = searchKey2.Length;
-        }
-        
-        if (keyStartIndex == -1)
-        {
-            Debug.LogWarning("⚠️ Could not find 'timeline' key in JSON!");
-            return;
-        }
-
-        int startIndex = keyStartIndex + keyLength;
-        int endIndex = json.IndexOf("]", startIndex);
-        
-        Debug.LogWarning($"🔍 Timeline array indices - keyStart: {keyStartIndex}, dataStart: {startIndex}, end: {endIndex}");
-
-        if (endIndex > startIndex)
-        {
-            string arrayContent = json.Substring(startIndex, endIndex - startIndex);
-            Debug.LogWarning($"🔍 Extracted array content: [{arrayContent}]");
-            
-            // Split by comma and process each value
-            string[] values = arrayContent.Split(',');
-            Debug.LogWarning($"🔍 Split into {values.Length} values");
-
-            int bookedCount = 0;
-            for (int i = 0; i < values.Length && i < 24; i++)
-            {
-                // Clean the value: remove quotes, spaces, etc.
-                string cleanValue = values[i].Trim().Trim('"').Trim();
-                Debug.LogWarning($"🔍 Slot {i}: '{cleanValue}'");
-                
-                // Check if it's "booked" (1) or "free" (0)
-                if (cleanValue == "booked")
-                {
-                    timelineData[i] = 1;
-                    bookedCount++;
-                }
-                else
-                {
-                    timelineData[i] = 0;
-                }
-            }
-
-            Debug.LogWarning($"✅ Timeline parsed: {bookedCount} booked slots out of {values.Length}");
-
-            // Update UI
-            UpdateTimelineSlots();
-            UpdateBookingPercentage(bookedCount);
-            UpdateBarChart(bookedCount);
-        }
-        else
-        {
-            Debug.LogWarning($"⚠️ Failed to find timeline array closing bracket! startIndex={startIndex}, endIndex={endIndex}");
-        }
-    }
-
-    void UpdateTimelineSlots()
-    {
-        if (timelineContainer == null) return;
-
-        for (int i = 0; i < 24; i++)
-        {
-            VisualElement slot = timelineContainer.Q<VisualElement>($"TimelineSlot_{i}");
-            if (slot != null)
-            {
-                slot.RemoveFromClassList("booked");
-                slot.RemoveFromClassList("free");
-
-                if (timelineData[i] == 1)
-                {
-                    slot.AddToClassList("booked");
-                }
-                else
-                {
-                    slot.AddToClassList("free");
-                }
-            }
-        }
-    }
-
-    void UpdateBookingPercentage(int bookedCount)
-    {
-        if (bookingPercentageLabel != null)
-        {
-            float percentage = (bookedCount / 24f) * 100f;
-            bookingPercentageLabel.text = $"{percentage:F0}%";
-        }
-    }
-
-    void UpdateBarChart(int bookedCount)
-    {
-        if (bookedBar != null && freeBar != null)
-        {
-            int freeCount = 24 - bookedCount;
-
-            // Calculate flex-grow values
-            float bookedFlex = bookedCount;
-            float freeFlex = freeCount;
-
-            // Apply styles using USS
-            bookedBar.style.flexGrow = bookedFlex;
-            freeBar.style.flexGrow = freeFlex;
-        }
-    }
-
-    void UpdateConnectionStatus(bool connected)
-    {
-        Debug.LogWarning($"🔌 Updating connection status to: {(connected ? "CONNECTED" : "DISCONNECTED")}");
-
-        if (statusIndicator != null && statusText != null)
-        {
+            // 移除旧状态类
             statusIndicator.RemoveFromClassList("connected");
             statusIndicator.RemoveFromClassList("disconnected");
 
+            // 添加新状态类
             if (connected)
             {
                 statusIndicator.AddToClassList("connected");
-                statusText.text = "Connected - Data received";
-                Debug.LogWarning("✅ UI Status updated to: Connected");
             }
             else
             {
                 statusIndicator.AddToClassList("disconnected");
-                statusText.text = "Waiting for data...";
-                Debug.LogWarning("⚠️ UI Status updated to: Waiting");
             }
         }
-        else
-        {
-            Debug.LogWarning("⚠️ Status UI elements are null!");
-        }
     }
 
-    void ClearTimelineData()
+    private void OnDestroy()
     {
-        for (int i = 0; i < 24; i++)
-        {
-            timelineData[i] = 0;
-        }
-        UpdateTimelineSlots();
-        UpdateBookingPercentage(0);
-        UpdateBarChart(0);
-    }
-
-    string ExtractStringValue(string json, string key)
-    {
-        // Support both "key":"value" and "key": "value" (with space)
-        string searchKey1 = $"\"{key}\":\"";
-        string searchKey2 = $"\"{key}\": \"";
-
-        int startIndex = json.IndexOf(searchKey1);
-        int keyLength = searchKey1.Length;
-
-        if (startIndex == -1)
-        {
-            startIndex = json.IndexOf(searchKey2);
-            keyLength = searchKey2.Length;
-        }
-
-        if (startIndex == -1)
-        {
-            Debug.LogWarning($"⚠️ Could not find key '{key}' in JSON");
-            return "";
-        }
-
-        startIndex += keyLength;
-        int endIndex = json.IndexOf("\"", startIndex);
-        if (endIndex == -1)
-        {
-            Debug.LogWarning($"⚠️ Could not find closing quote for key '{key}'");
-            return "";
-        }
-
-        string value = json.Substring(startIndex, endIndex - startIndex);
-        Debug.LogWarning($"✅ Extracted '{key}' = '{value}'");
-        return value;
-    }
-
-    void OnDestroy()
-    {
+        // 取消订阅事件
         if (mqttManager != null)
         {
             mqttManager.OnMessageArrived -= HandleMqttMessage;
+            mqttManager.OnConnectionSucceeded -= HandleConnectionStatus;
         }
+
+        Debug.Log("[RoomInfoPanelController] Controller destroyed and events unsubscribed");
     }
 }

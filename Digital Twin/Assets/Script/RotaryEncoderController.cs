@@ -159,12 +159,12 @@ public class RotaryEncoderController : MonoBehaviour
         // Q - Counter-Clockwise
         if (Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
         {
-            // Publish MQTT for CCW rotation
+            // Publish MQTT for CCW rotation (NOT retained - transient event)
             if (mqttManager != null && mqttManager.isConnected)
             {
                 mqttManager.topicPublish = "student/CASA0019/Gilang/encoder";
                 mqttManager.messagePublish = "{\"encoder\":\"rotation\",\"direction\":\"ccw\"}";
-                mqttManager.Publish();
+                mqttManager.Publish(false); // false = not retained
             }
             RotateCounterClockwise();
         }
@@ -172,12 +172,12 @@ public class RotaryEncoderController : MonoBehaviour
         // E - Clockwise
         if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
-            // Publish MQTT for CW rotation
+            // Publish MQTT for CW rotation (NOT retained - transient event)
             if (mqttManager != null && mqttManager.isConnected)
             {
                 mqttManager.topicPublish = "student/CASA0019/Gilang/encoder";
                 mqttManager.messagePublish = "{\"encoder\":\"rotation\",\"direction\":\"cw\"}";
-                mqttManager.Publish();
+                mqttManager.Publish(false); // false = not retained
             }
             RotateClockwise();
         }
@@ -237,13 +237,13 @@ public class RotaryEncoderController : MonoBehaviour
 
             Debug.Log($"[RotaryEncoder] 🔘 Button PRESSED - Publishing MQTT");
 
-            // Publish MQTT message for mode toggle
+            // Publish MQTT message for mode toggle (NOT retained - it's a transient event)
             if (mqttManager != null && mqttManager.isConnected)
             {
                 mqttManager.topicPublish = "student/CASA0019/Gilang/encoder";
                 mqttManager.messagePublish = "{\"encoder\":\"button\",\"pressed\":true}";
-                mqttManager.Publish();
-                Debug.Log($"[RotaryEncoder] 📤 Published button press to MQTT");
+                mqttManager.Publish(false); // false = not retained for button press
+                Debug.Log($"[RotaryEncoder] 📤 Published button press to MQTT (transient)");
             }
             else
             {

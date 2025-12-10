@@ -188,6 +188,60 @@ def fetch_bookings():
     return grouped
 
 # ============================
+# INSTANT UPDATE ON ROOM CHANGE
+# ============================
+def update_room_data(client, room):
+    """Immediately fetch and publish data for a specific room"""
+    print(f"\n[INSTANT UPDATE] Room {room} selected, fetching fresh data...")
+    
+    # Fetch latest bookings
+    grouped_bookings = fetch_bookings()
+    
+    # ---- Timeline ----
+    bookings = grouped_bookings.get(room, [])
+    timeline = build_timeline(bookings)
+    
+    client.publish(
+        f"{MQTT_BASE}/{room}/timeline",
+        json.dumps({"room": room, "timeline": timeline}),
+        retain=True
+    )
+    
+    # ---- Environment Status ----
+    msg = simulate_values_for_room(room)
+    client.publish(
+        f"{MQTT_BASE}/{room}/status",
+        json.dumps(msg),
+        retain=True
+    )
+    
+    print(f"[INSTANT UPDATE] Published fresh data for room {room}")
+    print(f"  Timeline: {timeline}")
+    print(f"  Status: {msg}")
+
+# ============================
+# MQTT CALLBACK FOR ROOM CHANGES
+# ============================
+def on_message(client, userdata, message):
+    """Handle incoming MQTT messages"""
+    try:
+        payload = json.loads(message.payload.decode())
+        
+        # Check if this is a room change message
+        if message.topic == f"{MQTT_BASE}/current":
+            if "current_room" in payload:
+                room = payload["current_room"]
+                print(f"\n🔄 Room changed to: {room}")
+                
+                # Instantly update this room's data
+                if room in ROOMS:
+                    update_room_data(client, room)
+                else:
+                    print(f"⚠️  Unknown room: {room}")
+    except Exception as e:
+        print(f"Error processing message: {e}")
+
+# ============================
 # MAIN LOOP
 # ============================
 def main():
@@ -195,8 +249,16 @@ def main():
     print("Connecting to MQTT broker...")
     client = mqtt.Client()
     client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+    
+    # Set callback for room change notifications
+    client.on_message = on_message
+    
     client.connect(BROKER_HOST, BROKER_PORT, keepalive=60)
     client.loop_start()
+    
+    # Subscribe to room change topic
+    client.subscribe(f"{MQTT_BASE}/current")
+    print(f"Subscribed to {MQTT_BASE}/current for instant updates")
 
     print("Fetching LibCal + Simulating environment data...")
 
@@ -214,14 +276,16 @@ def main():
 
             client.publish(
                 f"{MQTT_BASE}/{room}/timeline",
-                json.dumps({"room": room, "timeline": timeline})
+                json.dumps({"room": room, "timeline": timeline}),
+                retain=True  # Retain message for new subscribers
             )
 
             # ---- Environment Status ----
             msg = simulate_values_for_room(room)
             client.publish(
                 f"{MQTT_BASE}/{room}/status",
-                json.dumps(msg)
+                json.dumps(msg),
+                retain=True  # Retain message for new subscribers
             )
 
             print(room, "timeline:", timeline)
