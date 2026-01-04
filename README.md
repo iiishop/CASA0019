@@ -1,402 +1,133 @@
-Project Title: Study Space Availability and Comfort Monitoring
-UCL CASA0019 — Sensor Data Visualisation
+# Study Space Availability & Comfort Monitoring  
+**CASA0019 – Sensor Data Visualisation**  
+UCL Centre for Advanced Spatial Analysis (CASA)
 
-Group Members: [Names]
-Repository Link: [URL]
+A physical–digital data visualisation system that reinterprets UCL study space availability and room conditions through a shared visual language, combining an ambient tabletop device with a digital twin.
 
-1. Introduction & Project Context
+---
 
-University study spaces play a crucial role in how students focus, collaborate, and learn. However, students often face challenges in navigating these spaces — seats may be full, noise levels unpredictable, and comfort conditions unclear until they physically arrive. As universities move toward smart-campus infrastructures, ambient IoT visualisation systems can help students make informed decisions immediately, without needing to open an app or interpret complex dashboards.
+## Project Overview
 
-This project proposes a connected physical–digital ecosystem designed to communicate study-space conditions at a glance.
-Our system integrates:
+Bookable study spaces play an important role in shaping how students focus, interact, and work together. These spaces support individual concentration as well as group discussion and collaborative learning, meaning that their availability and atmosphere directly influence both personal productivity and collective engagement.
 
-A physical tabletop data device using NeoPixel LEDs and TFT displays
+At UCL, a web-based reservation system allows students to check the availability of study spaces in advance. While effective for scheduling, this system represents space primarily through box-style time slots and simplified visual layouts. Such representations provide limited insight into the spatial, social, and experiential qualities of learning environments. As a result, students often still need to physically visit a space to assess whether it supports their current mode of work. At an operational level, the same representation also makes it difficult to quickly perceive how spaces respond to changing occupancy patterns and room conditions throughout the day.
 
-A Unity Digital Twin mirroring live data
+This project does not aim to replace the existing system, but to reinterpret its data through visualisation. It investigates how study space availability and room dynamics can be communicated through a combination of physical data visualisation and a digital twin, enabling information to be perceived passively rather than actively interpreted. By expressing data through physical form and visual behaviour, the project frames visualisation as a process of sense-making rather than optimisation. This approach supports everyday student decision-making while also offering facilities teams a higher-level understanding of how learning spaces perform over time.
 
-The UCL Library Booking API for real-time availability
+---
 
-Simulated environmental + behavioural data to model comfort
+## Team
 
-The aim is to create a novel, ambient visualisation device that is:
+- **Gilang Pamungkas** — Physical device programming and data communication (MQTT)  
+- **Yuqian Lin** — Digital twin and AR visualisation (Unity)  
+- **Chaoshuo Han** — Structural design and 3D modelling of the physical device  
+- **Cheng Zhong** — Cross-module integration, digital twin support, and report structure  
 
-Emotionally expressive — conveying the “mood” of a study space
+Repository: https://github.com/iiishop/CASA0019
 
-Low cognitive load — instantly interpreted without reading
+---
 
-Multi-modal — blending physical ambience with digital detail
+## Context & Site
 
-Replicable — providing a template for smart-campus IoT design
+The system focuses on bookable study spaces at **UCL East Library**, where students regularly balance availability, comfort, and social atmosphere when choosing where to work.
 
-Our final design uses five NeoPixel rings arranged on a wooden meeting-room-style tabletop, each with a 1.8-inch TFT screen at the centre. The round layout intentionally resembles a collaborative meeting setup, allowing viewers to “sense” a study-space ambience simply by looking at the installation from afar.
+![UCL East Library and study space locations](docs/images/ucl_east_library.png)
 
-2. Rationale & Design Ideation
-Why an Ambient Display?
+---
 
-Surveying existing occupancy dashboards showed that students prefer immediate, non-textual signals about seat availability and comfort. Emotional cues and colour are interpreted far faster than numerical data.
+## From Data to Visual Language
 
-Why a Wooden Meeting-Table Metaphor?
+Rather than presenting raw metrics, the project translates key spatial conditions into a visual language that can be perceived intuitively. The system combines two types of data: availability information derived from the UCL Library booking API, and a set of environmental and behavioural indicators designed to explore how the atmosphere of learning spaces can be communicated visually rather than numerically.
 
-Earlier prototypes focused on generic boxes or flat LED panels, but they lacked emotional resonance. The meeting-room style tabletop offered:
+Availability is converted into a 30-minute free/booked timeline for each study space across the day (09:00–21:00). This representation supports rapid comparison without requiring users to read or interpret detailed schedules.
 
-A stronger connection to real study environments
+To represent comfort and room dynamics, the project focuses on four indicators: occupancy, noise, lighting, and temperature. In the current prototype, these values are synthetically generated within plausible ranges and treated as relative perceptual signals rather than precise measurements.
 
-Warmth and familiarity through materials
+The system uses a shared set of visual rules across physical and digital representations. In Bookings mode, the NeoPixel ring acts as a daily timeline where green indicates free slots and red indicates booked slots. In Condition mode, the display cycles through occupancy, noise, temperature, and lighting. Colour identifies the active attribute, while the number of illuminated LEDs encodes relative intensity. Meaning emerges through temporal behaviour rather than labels or numerical values.
 
-A natural circular layout for five study rooms
+---
 
-A physical metaphor for collaboration and gathering
+## Physical Data Visualisation Device
 
-This aesthetic choice significantly improves the narrative clarity of the device.
+The physical data visualisation device is conceived as a passive, ambient interface that communicates the state of study spaces without requiring sustained attention or analytical interaction. Rather than functioning as a dashboard that users must actively query, the device supports quick, intuitive readings through form, colour, and movement.
 
-Why NeoPixel Rings + TFT Displays?
+![Wiring diagram](docs/images/wiring_diagram.png)  
+![Fusion 360 enclosure design](docs/images/fusion360_design.png)
 
-Our final visualisation strategy emerged after testing multiple mediums:
+The device adopts a tabletop form factor with a circular geometry, inspired by collaborative learning environments. The enclosure was designed in Fusion 360 and fabricated through 3D printing. One study space is displayed at a time, with users navigating between spaces by rotating a rotary encoder and switching between modes by pressing the encoder. This interaction model prioritises clarity and calm, sequential exploration.
 
-Prototype	Issue
-8×8 / 16×16 LED matrices	Too blocky for emotion
-Full 96×48 RGB matrix	Clear, but loses ambience & physicality
-Pure NeoPixel rings	Good ambience, limited detail
-Split-flap mechanical	Too complex to fabricate
+A NeoPixel LED ring serves as the primary visual medium. In Bookings mode, the ring represents the full day using 24 LEDs, each corresponding to a 30-minute interval. An acrylic overlay engraved to resemble a watch face anchors the abstract LED timeline in a familiar time-reading convention.
 
-NeoPixel rings + TFT screens provided the perfect hybrid:
+In Condition mode, the LED ring shifts to an animated display of room dynamics. Colour identifies the active attribute, while progressive illumination communicates relative intensity. Motion and repetition allow users to perceive change over time without relying on numerical values.
 
-NeoPixel rings → represent individual indicators in 4 quadrants
+A TFT screen plays a complementary role. In Bookings mode, it displays contextual information such as room name, capacity, facilities, and daily booking percentage. In Condition mode, the screen avoids numerical data and instead presents an expressive icon summarising the room’s overall state.
 
-TFT screens → display expressive 128×128 emoticons or room details
+![TFT emotive display](docs/images/tft_emotive.png)
 
-Wooden tabletop → brings the installation into a familiar spatial metaphor
+---
 
-Thus, the design evolved toward a multi-layered communication system.
+## Digital Visualisation & Digital Twin
 
-3. Data Sources & Logic
-3.1 UCL Library Booking API (Primary Data Feed)
+The digital twin extends the physical data visualisation device into a complementary digital medium. While the physical device is designed for peripheral, glance-based awareness, the digital twin supports closer inspection and comparison without altering the underlying data or visual logic.
 
-The system retrieves real-time information for five study spaces at UCL East Library:
+![Digital twin interface](docs/images/digital_twin.png)
 
-Room availability (Available / Busy / Full)
+Both the physical device and the digital twin subscribe to the same MQTT topics and operate on identical data streams. This ensures consistency across media, preserving colour mappings, modes, and temporal behaviour.
 
-Maximum capacity
+The digital twin presents all four comfort indicators simultaneously using concentric rings, enabling parallel reading and comparison. Quantitative values and units are displayed to support verification when precision is required. Unlike the physical device, the digital twin provides persistence, allowing users to pause, compare, and reflect on room conditions over time.
 
-Room metadata (floor, building, facilities)
+---
 
-Update timestamp
+## Physical–Digital Integration
 
-This forms the backbone of Availability Mode, feeding directly into both the physical device and the digital twin.
+A core design principle of the project is the maintenance of a consistent visual language across physical and digital representations. Colour distinguishes attributes, quantity represents intensity, and motion communicates change over time. By preserving these mappings across media, the system supports cognitive continuity and reduces the need for relearning when users move between physical and digital interfaces.
 
-3.2 Environmental & Behavioural Condition Simulation (Four Indicators)
+---
 
-To model comfort and behavioural dynamics in study rooms, we simulate four key indicators:
+## Development Process & Visual Iteration
 
-1. Noise Level (0–100)
+The project evolved through iterative testing of how much information could be communicated visually without overwhelming users. Early designs that displayed multiple spaces simultaneously were abandoned due to physical complexity and cognitive overload. Refocusing on a single space at a time improved legibility and interpretability.
 
-Models conversational and ambient noise
+Rather than introducing numerical summaries, the system adopts emotive icons to represent overall room state, encouraging intuitive interpretation. Legends and scale explanations were externalised into a separate visual booklet to preserve the calm, ambient quality of the device.
 
-Drives LED pulsing speed
+![Visual language booklet](docs/images/visual_booklet.png)
 
-Heavy noise increases emoticon stress level
+---
 
-2. Light Level (low → high)
+## Evaluation: Readability & Perception
 
-Represents brightness suitability for studying
+Evaluation focused on perceptual clarity and interpretability rather than numerical accuracy. The circular LED timeline proved highly legible for availability, aligning naturally with time-based mental models. Strong colour contrast enabled recognition from a distance, while progressive illumination supported relative comparison of comfort conditions.
 
-LED quadrants shift between cool/warm tones
+The digital twin played an important role in evaluation by revealing limitations not visible in the physical artefact alone, such as moments where colour similarity or animation speed reduced clarity. Overall, the system prioritises perceptual coherence over analytical precision, supporting everyday judgement of space suitability.
 
-3. Temperature (°C)
+---
 
-Maps to colours: blue → green → orange → red
+## Reflection & Future Extensions
 
-Affects comfort emoticon (e.g., ❄️ or 🔥)
+The project highlights the tension between visual richness and cognitive simplicity. While colour, motion, and spatial encoding effectively communicate presence and intensity, they also require careful calibration to avoid overload. Future iterations would focus on softer LED diffusion, lower baseline brightness, and slower transitions to enhance visual comfort.
 
-4. Door Activity / Footfall Count
+A key future extension is to move beyond observing availability toward enabling booking directly through the system. This would allow users to select time slots via the physical device, publish booking intent through MQTT, validate availability through backend services, and complete booking via official institutional workflows, with feedback communicated through brief visual animations.
 
-This is our most important behavioural indicator.
+![Booking interaction concept](docs/images/booking_concept.png)
 
-Measures how frequently the room is entered/exited
+---
 
-High activity = more distractions
+## Repository Structure
 
-Strongly impacts perceived comfort
+```text
+hardware/
+├── fritzing/
+│   └── wiring.fzz
+├── enclosure/
+│   ├── fusion360/
+│   └── stl/
+firmware/
+├── esp32/
+digital-twin/
+├── unity/
+docs/
+├── images/
+├── booklet/
 
-Mapped to LED flicker effects
-
-The inclusion of door-movement frequency reflects real student experience — a room that is technically available may still feel uncomfortable if people constantly enter or leave.
-
-3.3 Data Pipeline
-UCL API → Unity/Node → ESP32 → TFT Display + NeoPixel Rings  
-Simulated Condition Data → ESP32 → LED Quadrants + Emoticon  
-Unity → Mirrors entire logic for digital twin
-
-4. Physical Data Device (Final Design)
-4.1 Form & Aesthetic
-
-The device uses:
-
-A wooden tabletop surface (laser-cut finish)
-
-Three wooden legs for elevation
-
-A rounded arrangement of five study-space nodes
-
-Each node includes:
-
-1 × NeoPixel ring (24 LEDs)
-
-1 × ST7735S TFT display (128×160 pixels) embedded in the centre
-
-The form resembles a miniature collaborative meeting table, symbolising the study spaces it represents.
-
-4.2 Visualisation Modes
-A. Availability Mode (API-driven)
-
-Each TFT screen displays a compact room-information card:
-
-Room name
-
-Maximum capacity
-
-Key facilities (plug points, enclosed pod, laptop charging)
-
-Building location
-
-Floor
-
-Accessibility link
-
-This mode serves as a spatial directory of UCL East study pods.
-
-LED rings provide a halo-style availability cue:
-
-Green → Available
-
-Yellow → Limited
-
-Red → Full
-
-Ripple animation on refresh
-
-B. Condition Mode (Comfort Summary)
-
-The TFT screen shows a 128×128 expressive emoticon that summarises all four indicators:
-
-Example mappings:
-
-🙂 Comfortable
-
-😐 Neutral
-
-😬 Busy
-
-😣 Noisy / Distracting
-
-😴 Very Quiet
-
-❄️ Too Cold
-
-🔥 Too Hot
-
-⛔ Closed / Unavailable
-
-This combines environmental + behavioural indicators into an immediate emotional cue.
-
-The NeoPixel ring’s four quadrants light up separately to show:
-
-Quadrant	Indicator
-Top-left	Noise level
-Top-right	Light level
-Bottom-right	Temperature
-Bottom-left	Door activity
-
-This dual-layer visualisation (LED detail + TFT summary) provides both quick emotional reading and analytical breakdown.
-
-4.3 Interaction Design
-
-Two buttons on the device control:
-
-Mode switching (Availability ↔ Condition)
-
-Date navigation (for replaying snapshots, optional)
-
-A boot animation indicates data loading.
-The device is designed for passive interaction — users understand the content simply by observing.
-
-4.4 Technical Implementation
-
-ESP32 controls all 5 NeoPixel rings + 5 TFT screens
-
-SPI optimization ensures tear-free rendering on TFT
-
-LED brightness is tuned for indoor viewability
-
-Quadrant logic converts raw values into visual narratives
-
-Condition scoring merges 4 indicators into a single emoticon
-
-4.5 What Worked Well
-
-The tabletop metaphor made the concept instantly recognisable
-
-NeoPixel quadrants create high information density with low clutter
-
-Emotional icons increased intuitiveness
-
-TFT screens elevated the expressiveness beyond LEDs alone
-
-Wood material improved visual appeal and familiarity
-
-4.6 Issues & Improvements
-
-Power delivery required careful distribution (TFT + LEDs draw spikes)
-
-SPI redraw speed needed optimisation for multi-screen use
-
-Higher-quality capacitive buttons could improve interaction
-
-LED–TFT brightness matching required visual calibration
-
-5. Unity Digital Twin (Extended Digital Interface)
-5.1 Purpose
-
-The digital twin enhances the physical device by providing:
-
-Deeper context
-
-Historical trends
-
-Detailed room information
-
-Explicit numeric sensors
-
-Interactivity
-
-This dual-representation demonstrates how physical ambient devices and detailed dashboards can complement each other.
-
-5.2 Features
-
-Real-time data syncing with physical device
-
-Historical trend graphs
-
-Interactive room panels
-
-Comfort breakdown
-
-Colour and emoticon mapping identical to the physical device
-
-Animation transitions for clarity
-
-5.3 Architecture
-
-Unity C# RoomManager component
-
-JSON feeds from API + simulation
-
-Prefab-based UI blocks
-
-Shared colour logic with ESP32
-
-Scene hierarchy matching physical layout
-
-5.4 Reflections
-
-What worked:
-
-Smooth visual hierarchy
-
-Strong alignment with physical device
-
-Clear navigation
-
-Replicable structure
-
-Challenges:
-
-Prefab linking bugs
-
-Time constraints for MQTT
-
-Need for automated data logging
-
-6. Physical–Digital Integration
-
-We emphasised cohesion across both components:
-
-Integration Principle	Implementation
-Shared colour logic	Same state → same colour on both devices
-Shared emoticons	128×128 icons reused in Unity
-Shared data model	One JSON structure powering both
-Shared layout	Five nodes arranged in the same order
-Mirrored modes	Availability and Condition behave the same
-
-The result feels like one system with two interfaces.
-
-7. Methodology & Reproducibility
-
-Steps:
-
-Early sketches
-
-Low-fidelity cardboard prototypes
-
-TFT/LED integration tests
-
-Pixel icon design (128×128)
-
-API testing and structuring
-
-Comfort simulation scripting
-
-Unity environment build
-
-Material fabrication
-
-System integration
-
-Documentation
-
-Everything required to reproduce the project is included in this repository:
-
-Wiring diagrams
-
-Code with comments
-
-Icon assets
-
-Unity project
-
-Data logic documentation
-
-8. Individual Contributions
-
-(Replace with your group details)
-
-Example structure:
-
-Member A — Hardware + Electronics
-
-Member B — API + Data Logic
-
-Member C — Unity Digital Twin
-
-Member D — Fabrication + Documentation
-
-9. Future Extensions
-
-Real sensors (mmWave, CO₂, sound classification)
-
-ML predictive availability
-
-WebGL export
-
-Multi-library network
-
-Fully wireless ESP32-MQTT communication
-
-Adaptive brightness + auto-comfort scoring
-
-10. Conclusion
-
-This project demonstrates how ambient IoT visualisation, expressive emotional design, and physical–digital integration can transform the way students perceive and navigate study spaces. By combining NeoPixel detail with emotive TFT displays inside a wooden tabletop metaphor, the system communicates both analytic data and the emotional “feel” of a room. The Unity digital twin extends the functionality, providing depth and clarity.
-
-Together, these components illustrate a future direction for smart-campus design: one where information is not merely displayed, but felt.
+Developed as part of CASA0019 – Sensor Data Visualisation
+UCL Centre for Advanced Spatial Analysis, University College London.
