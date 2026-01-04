@@ -129,5 +129,9 @@ docs/
 ├── images/
 ├── booklet/
 
+---
+
+## Acknowledgements 
+
 Developed as part of CASA0019 – Sensor Data Visualisation
 UCL Centre for Advanced Spatial Analysis, University College London.
