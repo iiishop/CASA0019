@@ -27,17 +27,23 @@ To represent comfort and room dynamics, the project focuses on four indicators: 
 
 These indicators are translated into a small set of consistent visual rules shared across the physical device and the digital twin. In Bookings mode, the NeoPixel ring operates as a 24-slot timeline, where green represents free, and red represents booked. In Condition mode, the ring shifts to an animated attribute display: the system cycles through occupancy, noise, temperature, and light every five seconds, where colour identifies the active attribute and the number of illuminated LEDs encodes its magnitude. Here, visual behaviour refers to the temporal logic of attribute rotation and progressive fill, allowing meaning to emerge through change over time rather than through labels or numerical values. By applying the same mapping logic across media, the project establishes a coherent visual language for understanding availability and room dynamics at a glance.
 
-<p align="center">
-  <img src="img/json_availability.png" alt="Figure 2. Sample JSON Output of Availability Data" width="100">
-</p>
+<table align="center">
+  <tr>
+    <td align="center">
+      <img src="img/json_availability.png"
+           alt="Figure 2. Sample JSON Output of Availability Data"
+           width="100"><br>
+      <em>Figure 2. Sample JSON Output of Availability Data</em>
+    </td>
+    <td align="center">
+      <img src="img/json_comfort.png"
+           alt="Figure 3. Sample JSON Output of Comfort Data"
+           width="300"><br>
+      <em>Figure 3. Sample JSON Output of Comfort Data</em>
+    </td>
+  </tr>
+</table>
 
-<p align="center"><em>Figure 2. Sample JSON Output of Availability Data</em></p>
-
-<p align="center">
-  <img src="img/json_comfort.png" alt="Figure 3. Sample JSON Output of Comfort Data" width="100">
-</p>
-
-<p align="center"><em>Figure 3. Sample JSON Output of Comfort Data</em></p>
 
 
 ---
