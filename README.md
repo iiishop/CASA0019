@@ -1,6 +1,6 @@
 # Study Space Availability and Comfort Monitoring  
 **CASA0019 – Sensor Data Visualisation**  
-UCL Centre for Advanced Spatial Analysis
+UCL MSc Connected Environments
 
 ---
 
