@@ -163,20 +163,21 @@ A key future extension is to move beyond observing availability toward enabling 
 
 The following outlines the proposed step-by-step workflow:
 
-1. Extending Bookings mode to support selection
-The rotary encoder is used to step through individual 30-minute time slots around the LED ring, with a temporary visual highlight indicating the current selection.
+1. **Extending Bookings mode to support selection**<br>
+   The rotary encoder is used to step through individual 30-minute time slots around the LED ring, with a temporary visual highlight indicating the current selection.
 
-2. Expressing booking intent through MQTT
-A long press publishes a booking intent message containing the selected room ID and time range.
+2. **Expressing booking intent through MQTT**<br>
+   A long press publishes a booking intent message containing the selected room ID and time range.
 
-3. Validation through a service layer
-A backend service receives the booking intent and verifies availability against the live booking API.
+3. **Validation through a service layer**<br>
+   A backend service receives the booking intent and verifies availability against the live booking API.
 
-4. Completing booking through official channels
-Users are redirected to the existing booking system with the selected room and time pre-filled.
+4. **Completing booking through official channels**<br>
+   Users are redirected to the existing booking system with the selected room and time pre-filled.
 
-5. Immediate visual feedback
-Confirmation or rejection is reflected on both the physical device and the digital twin through brief visual animations.
+5. **Immediate visual feedback**<br>
+   Confirmation or rejection is reflected on both the physical device and the digital twin through brief visual animations.
+
 
 Alongside functional expansion, future iterations would also focus on reducing perceptual load: softer LED output, more gradual animations, and clearer onboarding through subtle, built-in guidance rather than external documentation. These changes would strengthen the device’s role as a calm, intelligible interface embedded within everyday study environments.
 
