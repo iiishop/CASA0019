@@ -157,8 +157,6 @@ Overall, the system prioritises perceptual coherence over analytical precision. 
 
 This project highlights how quickly visual richness can become cognitive complexity. Although the system was deliberately limited to five study spaces and two primary modes, the combined use of colour, motion, and spatial encoding still requires an initial period of interpretation. For first-time users, the NeoPixel rings communicate presence and intensity effectively, but the absence of an embedded legend means that understanding relies on inference rather than immediate clarity. While this aligns with the goal of ambient, non-intrusive visualisation, it also reveals a tension between expressiveness and accessibility.
 
-Another reflection concerns visual comfort. The NeoPixel LEDs provide strong contrast and visibility, but in a quiet study context their brightness can feel sharp, particularly in low-light environments. Although brightness was controllable, future work could soften the visual output through diffusion or slower temporal transitions.
-
 A key future extension is to move beyond observing availability toward enabling booking directly through the system. This would transform the device from a passive visualisation into an actionable interface while preserving its ambient character.
 
 ![Figure 9. Bookable Study Space in UCL East Library (Study Pod & Meeting Room)](img/floor_plan_library.png)
