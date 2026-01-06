@@ -59,11 +59,9 @@ These indicators are translated into a small set of consistent visual rules shar
 
 The physical data visualisation device is conceived as a passive, ambient interface that communicates the state of study spaces without requiring sustained attention or analytical interaction. Rather than functioning as a dashboard that users must actively query, the device remains present in the environment and supports quick, intuitive readings through form, colour, and movement. This approach is suited to everyday study decisions, where users often need to assess space suitability rapidly rather than interpret detailed data.
 
-**INSERT IMAGE OF FUSION DESIGN**
+![Figure 4. Final Physical Device Enclosure](img/enclosure.jpg)
+*Figure 4. Final Physical Device Enclosure*
 
-A circular object with a display and a screen
-
-Description automatically generated
 
 The device adopts a tabletop form factor with a circular geometry, inspired by the metaphor of a round conference table commonly associated with collaborative learning environments. The enclosure and structural components were designed using Fusion 360 and fabricated through 3D printing, allowing the physical form to align closely with the system’s data logic and interaction design. The device presents one study space at a time, with users navigating between spaces by rotating a rotary encoder and switching between modes by pressing the encoder. This simple, embodied interaction model reduces visual clutter and supports calm, sequential exploration rather than parallel comparison.
 
@@ -74,6 +72,9 @@ In Condition mode, the LED ring shifts from a static timeline to an animated dis
 The TFT screen plays a complementary role across both modes. In Bookings mode, it provides contextual information such as room name, capacity, facilities, and the overall booking percentage for the day. In Condition mode, the screen intentionally avoids numerical data and instead presents an expressive icon summarising the room’s state, reinforcing perceptual understanding while preventing information overload.
 
 Crucially, the device is designed to be readable without instruction. Colour, spatial position, repetition, movement, and simple physical gestures guide interpretation naturally. By embedding data within physical form and visual behaviour, the device transforms abstract spatial information into an intuitive, ambient presence that supports everyday decision-making in learning environments.
+
+![Figure 5. Wiring Diagram](img/study_space_wiring_bb.jpg)
+*Figure 5. Wiring Diagram*
 
 ---
 
