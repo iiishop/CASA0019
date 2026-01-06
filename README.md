@@ -25,7 +25,6 @@ Availability is taken from the booking API and converted into a 30-minute free/b
 
 To represent comfort and room dynamics, the project focuses on four indicators: occupancy percentage, noise, lighting, and temperature. In the current prototype, these values are synthetically generated within plausible ranges and treated as relative perceptual signals rather than precise measurements. The logic used to generate and update these indicators is implemented in a Python-based simulation module, which is publicly available as part of the project repository (see study_space_simulator.py).
 
-These indicators are translated into a small set of consistent visual rules shared across the physical device and the digital twin. In Bookings mode, the NeoPixel ring operates as a 24-slot timeline, where green represents free, and red represents booked. In Condition mode, the ring shifts to an animated attribute display: the system cycles through occupancy, noise, temperature, and light every five seconds, where colour identifies the active attribute and the number of illuminated LEDs encodes its magnitude. Here, visual behaviour refers to the temporal logic of attribute rotation and progressive fill, allowing meaning to emerge through change over time. By applying the same mapping logic across media, the project establishes a coherent visual language for understanding availability and room dynamics at a glance.
 
 <table align="center">
   <tr>
@@ -49,8 +48,6 @@ These indicators are translated into a small set of consistent visual rules shar
     </td>
   </tr>
 </table>
-
-
 
 
 ---
@@ -137,8 +134,6 @@ Material choices were also iterated. Although a wooden or laser-cut tabletop for
 
 ## 7. Evaluation: Readability & Perception
 
-The effectiveness of the system was evaluated qualitatively through readability, perceptual clarity, and interpretability rather than formal usability testing. As the device is designed for ambient awareness rather than precise measurement, success was assessed by how quickly users could form an understanding of space availability and comfort conditions at a glance.
-
 The NeoPixel ring proved highly legible for temporal availability. The circular layout aligns naturally with a time-based mental model, allowing users to distinguish booked and free slots without textual explanation. Colour contrast between booked and free states enabled rapid pattern recognition, particularly when viewed from a distance. The physical rotation offset, mirrored in the digital twin, helped reinforce spatial orientation and reduced ambiguity.
 
 For environmental conditions, readability was evaluated through perceptual differentiation rather than numerical accuracy. Progressive illumination and colour shifts allowed users to compare relative comfort levels without requiring interpretation of exact values. The use of emotive symbols further supported immediate comprehension by translating complex sensor data into affective cues.
@@ -189,4 +184,4 @@ Alongside functional expansion, future iterations would also focus on reducing p
 
 ## 9. Individual Contributions
 
-This project was developed collaboratively. Gilang Pamungkas led the physical device software and communication; Yuqian Lin developed the digital twin and AR visualisation; Chaoshuo Han designed and modelled the physical enclosure; Cheng Zhong coordinated integration and report structure. The report was jointly written by all team members.
+This project was developed collaboratively. Gilang Pamungkas led the system concept, interaction design, and physical device software; Yuqian Lin developed the digital twin and AR visualisation; Chaoshuo Han designed and modelled the physical enclosure; Cheng Zhong coordinated integration and report structure. The report was jointly written by all team members.
