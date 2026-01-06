@@ -118,7 +118,8 @@ This consistency enables cognitive continuity across media. Users who understand
 
 Crucially, the project defines a visual grammar rather than a set of interface components. While the physical device prioritises ambient, glanceable perception and the digital twin provides expanded context and persistence, both adhere to the same visual language. This shared grammar allows each medium to play a complementary role without fragmenting the user’s understanding of the system.
 
-**INSERT IMAGE TFT WITH EMOTICON**
+**INSERT IMAGE DEVICE + TWIN ON COMFORT MODE**
+
 
 ---
 
@@ -129,6 +130,12 @@ The project evolved through iterative testing of how much information could be c
 A key visual iteration concerned how room conditions were summarised. Rather than introducing additional numerical readouts or text, the system adopts expressive emoticons to represent overall room state. This approach was chosen to encourage emotional and intuitive interpretation—allowing users to sense whether a space “feels” calm, busy, or uncomfortable at a glance—without requiring analytical reading.
 
 Another challenge involved representing multiple comfort attributes with different units and scales. Early ideas to place all scales directly on the device were rejected, as this quickly crowded the surface and conflicted with the ambient nature of the display. Instead, scale definitions and mappings were externalised into an online guideline booklet, maintaining visual simplicity on the device itself. While alternative solutions—such as printing legends directly onto the device—were considered, a fully satisfactory integration was not finalised within the project timeframe.
+
+<p align="center">
+  <img src="img/booklet_guide.png" alt="Figure 8. Scale Description on Online Guideline Booklet" width="300">
+</p>
+
+<p align="center"><em>Figure 8. Scale Description on Online Guideline Booklet</em></p>
 
 Material choices were also iterated. Although a wooden or laser-cut tabletop form was initially envisioned, time constraints led to a 3D-printed enclosure, refined through technical guidance to improve legibility and tactility. Together, these iterations reflect a balance between expressiveness, legibility, and practical stability.
 
@@ -146,6 +153,9 @@ The digital twin played a critical evaluative role by revealing limitations not 
 
 Overall, the system prioritises perceptual coherence over analytical precision. Its success lies in enabling users to quickly judge whether a space is suitable rather than why in numerical terms, supporting lightweight decision-making in everyday contexts.
 
+**INSERT IMAGE DEVICE + TWIN ON AVAILABITY MODE**
+
+
 ---
 
 ## 8. Reflection & Future Visual Extensions
@@ -156,23 +166,31 @@ Another reflection concerns visual comfort. The NeoPixel LEDs provide strong con
 
 A key future extension is to move beyond observing availability toward enabling booking directly through the system. This would transform the device from a passive visualisation into an actionable interface while preserving its ambient character.
 
-### Extending Bookings mode to support selection
+<p align="center">
+  <img src="img/booking_feature.png" alt="Figure 9. Existing Booking Feature" width="300">
+</p>
+
+<p align="center"><em>Figure 9. Exising Booking Feature</em></p>
+
+The following outlines the proposed step-by-step workflow:
+
+1. Extending Bookings mode to support selection
 
 In addition to displaying availability, the rotary encoder could be used to step through individual 30-minute slots around the ring. A temporary visual behaviour (e.g. pulsing or rotating highlight) would indicate the currently selected time window without adding new colours or symbols.
 
-### Expressing booking intent through MQTT
+2. Expressing booking intent through MQTT
 
 When a user confirms a selection via a long press, the device would publish a lightweight booking intent message containing sxthe room ID and time range. This keeps the physical interaction simple while making the action explicit within the system.
 
-### Validation through a service layer
+3. Validation through a service layer
 
 A backend service would listen for booking intents and re-check live availability through the booking API. This ensures that the physical device does not act on outdated information.
 
-### Completing booking through official channels
+4. Completing booking through official channels
 
 Rather than handling authentication on the device, the service would redirect users to the existing booking workflow with the selected room and time pre-filled. This preserves institutional access control while still grounding the interaction in the physical artefact.
 
-### Immediate visual feedback
+5. Immediate visual feedback
 
 Confirmation or rejection would be sent back to both the physical device and the digital twin, using brief, distinct animations rather than text-heavy messages to maintain visual continuity.
 
