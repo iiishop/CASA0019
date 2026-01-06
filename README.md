@@ -10,7 +10,10 @@ Bookable study spaces play an important role in shaping how students focus, inte
 
 At UCL, a web-based reservation system allows students to check the availability of study spaces in advance. While effective for scheduling, this system represents space primarily through box-style time slots and simplified visual layouts. Such representations provide limited insight into the experiential qualities of learning environments. As a result, students often still need to physically visit a space to assess whether it supports their current mode of work. At an operational level, the same representation also makes it difficult to quickly perceive how spaces respond to changing occupancy patterns and room conditions throughout the day.
 
+Prior research shows that higher education students’ study-space choices are shaped by a combination of environmental comfort and functional needs (e.g., noise, privacy, facilities), supporting the treatment of indoor conditions as a meaningful determinant of space use (Beckers, van der Voordt, & Dewulf, 2016). Indoor environmental conditions have also been shown to significantly influence occupants’ comfort, satisfaction, and performance outcomes; integrated post-occupancy evaluation approaches combining monitored environmental data with subjective responses and objective performance measures have quantified these relationships in operational educational buildings (Andargie & Azar, 2019).
+
 This project does not aim to replace the existing system, but to reinterpret its data through visualisation. It investigates how study space availability and room dynamics can be communicated through a combination of physical data visualisation and a digital twin, enabling information to be perceived passively rather than actively interpreted. By expressing data through physical form and visual behaviour, the project frames visualisation as a process of sense-making. This approach supports everyday student decision-making while also offering facilities teams a higher-level understanding of how learning spaces perform over time.
+
 
 <p align="center">
   <img src="img/booking_feature.png" alt="Figure 1. Existing Bookable Study Space System" width="800">
@@ -102,6 +105,8 @@ The digital twin additionally introduces persistence. Environmental states remai
 
 Rather than functioning as a conventional dashboard, the digital twin preserves the same visual grammar as the physical device while extending legibility, persistence, and simultaneity. This allows the same data to be interpreted differently across media without changing its underlying meaning.
 
+Our approach aligns with digital-twin implementations in educational buildings that integrate real-time IoT sensing with a spatial model to visualise indoor environmental conditions and support operational decisions (Opoku et al., 2024).
+
 ---
 
 ## 5. Physical-Digital Integration
@@ -184,3 +189,13 @@ Alongside functional expansion, future iterations would also focus on reducing p
 ## 9. Individual Contributions
 
 This project was developed collaboratively. Gilang Pamungkas led the system concept, interaction design, and physical device software; Yuqian Lin developed the digital twin and AR visualisation; Chaoshuo Han designed and modelled the physical enclosure; Cheng Zhong coordinated integration and report structure. The report was jointly written by all team members.
+
+---
+
+## 10. Reference
+
+Andargie, M.S. and Azar, E. (2019) ‘An applied framework to evaluate the impact of indoor office environmental factors on occupants’ comfort and working conditions’, Sustainable Cities and Society, 46, 101447. https://doi.org/10.1016/j.scs.2019.101447
+
+Beckers, R., van der Voordt, T. and Dewulf, G. (2016) ‘Learning space preferences of higher education students’, Building and Environment, 104, pp. 243–252. https://doi.org/10.1016/j.buildenv.2016.05.013
+
+Opoku, D.-G.J., Perera, S., Osei-Kyei, R., Rashidi, M., Bamdad, K. and Famakinwa, T. (2023) ‘Digital twin for indoor condition monitoring in living labs: University library case study’, Journal of Building Engineering, 63, 105475. https://doi.org/10.1016/j.jobe.2022.105475
