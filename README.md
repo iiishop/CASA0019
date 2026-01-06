@@ -54,7 +54,7 @@ To represent comfort and room dynamics, the project focuses on four indicators: 
 
 ## 3. Physical Data Visualization Device
 
-The physical data visualisation device is conceived as a passive, ambient interface that communicates the state of study spaces at a glance. Rather than functioning as a dashboard that users must actively query, the device remains present in the environment and supports quick, intuitive readings through form, colour, and movement. This approach is suited to everyday study decisions, where users often need to assess space suitability rapidly rather than interpret detailed data.
+The physical data visualisation device is conceived as a passive, ambient interface that communicates the state of study spaces at a glance. Rather than functioning as an interactive dashboard, the device supports quick, intuitive interpretation through form, colour, and movement, aligning with everyday study decisions that require rapid assessment rather than detailed analysis.
 
 <p align="center">
   <img src="img/enclosure.jpg" alt="Figure 4. Final Physical Device Enclosure" width="300">
@@ -63,15 +63,15 @@ The physical data visualisation device is conceived as a passive, ambient interf
 <p align="center"><em>Figure 4. Final Physical Device Enclosure</em></p>
 
 
-The device adopts a tabletop form factor with a circular geometry, inspired by the metaphor of a round conference table commonly associated with collaborative learning environments. The enclosure and structural components were designed using Fusion 360 and fabricated through 3D printing, allowing the physical form to align closely with the system’s data logic and interaction design. The device presents one study space at a time, with users navigating between spaces by rotating a rotary encoder and switching between modes by pressing the encoder. This interaction model supports calm, sequential exploration.
+The device adopts a tabletop form factor with a circular geometry, inspired by the metaphor of a round conference table associated with collaborative learning. The enclosure was designed in Fusion 360 and fabricated through 3D printing, aligning the physical form with the system’s data logic and interaction model. One study space is presented at a time, with navigation handled via a rotary encoder for switching spaces and modes, supporting calm, sequential exploration.
 
-A NeoPixel LED ring serves as the primary medium for expressing temporal and quantitative information. In Bookings mode, the ring represents the full day from 09:00 to 21:00, with 24 LEDs corresponding to 30-minute intervals. Availability is communicated using a minimal categorical colour scheme—green for free and red for booked—allowing usable time periods to be recognised immediately without text or numerical interpretation. To support temporal orientation, the ring is paired with a circular acrylic overlay, engraved and manually sharpened using marker to resemble the markings of a watch face. This physical reference anchors the abstract LED timeline in a familiar time-reading convention.
+A NeoPixel LED ring serves as the primary medium for temporal and quantitative representation. In Bookings mode, the ring maps the day from 09:00 to 21:00 using 24 LEDs to represent 30-minute intervals, with green indicating availability and red indicating bookings. A circular acrylic overlay, engraved to resemble a watch face, provides a familiar temporal reference for the abstract LED timeline.
 
-In Condition mode, the LED ring shifts from a static timeline to an animated display of room dynamics. The system cycles through occupancy, noise, temperature, and lighting at fixed intervals. In this mode, colour identifies the active attribute, while the number of illuminated LEDs encodes its relative magnitude, scaled to the full ring. Progressive filling and timed rotation introduce motion as a key expressive element, allowing users to perceive intensity and change through visual behaviour.
+In Condition mode, the ring transitions to an animated display of room dynamics, cycling through occupancy, noise, temperature, and lighting. Colour identifies the active attribute, while the number of illuminated LEDs encodes relative magnitude. Progressive filling and rotation communicate intensity and change over time through visual behaviour.
 
-The TFT screen plays a complementary role across both modes. In Bookings mode, it provides contextual information such as room name, capacity, facilities, and the overall booking percentage for the day. In Condition mode, the screen intentionally avoids numerical data and instead presents an expressive icon summarising the room’s state, reinforcing perceptual understanding while preventing information overload.
+The TFT screen complements the LED ring by providing contextual information. In Bookings mode, it displays room details and overall booking levels, while in Condition mode it presents expressive icons rather than numerical values to reinforce perceptual understanding and reduce cognitive load.
 
-Crucially, the device is designed to be readable without instruction. Colour, spatial position, repetition, movement, and simple physical gestures guide interpretation naturally. By embedding data within physical form and visual behaviour, the device transforms abstract spatial information into an intuitive, ambient presence that supports everyday decision-making in learning environments.
+Overall, the device is designed to be readable without instruction. By embedding data within physical form and visual behaviour, it translates abstract spatial information into an intuitive, ambient presence that supports everyday decision-making in learning environments.
 
 <p align="center">
   <img src="img/wiring_diagram.jpg" alt="Figure 5. Wiring Diagram" width="500">
@@ -83,7 +83,7 @@ Crucially, the device is designed to be readable without instruction. Colour, sp
 
 ## 4. Digital Visualization and Digital Twin
 
-The digital twin extends the physical data visualisation device into a complementary digital medium, not to replace it, but to support different forms of interpretation and use. While the physical device is designed for peripheral, glance-based awareness in real space, the digital twin enables closer inspection and comparative understanding without altering the underlying data or logic of the system.
+The digital twin extends the physical data visualisation device into a complementary digital medium that supports different forms of interpretation. While the physical device is designed for peripheral, glance-based awareness in real space, the digital twin enables closer inspection and comparison without altering the underlying data or system logic.
 
 <p align="center">
   <img src="img/digital_twin.png" alt="Figure 6. Final Digital Twin" width="300">
@@ -91,15 +91,13 @@ The digital twin extends the physical data visualisation device into a complemen
 
 <p align="center"><em>Figure 6. Final Digital Twin</em></p>
 
-Both the physical device and the digital twin subscribe to the same MQTT topics and operate on identical data streams. This ensures full consistency across media: colour mappings, modes, and temporal behaviours are preserved rather than reinterpreted. Availability is visualised using the same red–green logic, while environmental conditions are represented through the same four attributes—occupancy, noise, temperature, and light—each mapped to a consistent colour identity. The digital twin therefore functions as a direct extension of the physical language, rather than a separate interface.
+Both the physical device and the digital twin subscribe to the same MQTT topics and operate on identical data streams, ensuring consistency across media. Colour mappings, modes, and temporal behaviours are preserved, with availability represented through the same red–green logic and environmental conditions expressed using four shared attributes: occupancy, noise, temperature, and lighting. The digital twin therefore functions as a direct extension of the physical visual language.
 
-The key enrichment provided by the digital twin lies in how information is spatially and temporally presented. Unlike the physical NeoPixel ring, which cycles through environmental attributes sequentially to preserve visual simplicity, the digital twin presents all four indicators simultaneously using concentric rings. This allows users to read multiple conditions in parallel and understand their relationships without waiting for temporal transitions. Quantitative values and units are also displayed, supporting verification and interpretation when more precision is required.
+The primary enrichment offered by the digital twin lies in its spatial and temporal presentation. Unlike the physical NeoPixel ring, which cycles through attributes sequentially to maintain visual simplicity, the digital twin presents all four indicators simultaneously using concentric rings. This allows conditions to be read in parallel and compared directly. Quantitative values and units are also displayed to support verification when greater precision is required.
 
-Importantly, the digital twin introduces persistence. Environmental states remain visible until updated, enabling users to pause, compare, and reflect—activities that are deliberately unsupported by the physical device, where meaning emerges through motion and change. This distinction reflects different interaction intentions rather than a hierarchy of interfaces.
+The digital twin additionally introduces persistence. Environmental states remain visible until updated, enabling pausing, comparison, and reflection—activities that are intentionally unsupported by the physical device, where meaning emerges through motion and change. Users typically transition to the digital twin when moving from ambient awareness to focused inquiry, for example to understand why a space appears busy, noisy, or uncomfortable.
 
-Switching between physical and digital media typically occurs when a user moves from ambient awareness to focused inquiry. A student might first notice availability or atmosphere via the tabletop device, then consult the digital twin to understand why a space appears busy, noisy, or uncomfortable. The digital twin thus supports continuity of understanding across contexts.
-
-For this reason, the digital twin is not “just a dashboard.” It does not introduce rankings, recommendations, or analytical layers. Instead, it preserves the same visual grammar while extending legibility, persistence, and simultaneity—allowing the same data to be read differently without changing its meaning.
+Rather than functioning as a conventional dashboard, the digital twin preserves the same visual grammar as the physical device while extending legibility, persistence, and simultaneity. This allows the same data to be interpreted differently across media without changing its underlying meaning.
 
 ---
 
