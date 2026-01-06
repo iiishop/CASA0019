@@ -143,7 +143,9 @@ The digital twin played a critical evaluative role by revealing limitations not 
 
 Overall, the system prioritises perceptual coherence over analytical precision. Its success lies in enabling users to quickly judge whether a space is suitable rather than why in numerical terms, supporting lightweight decision-making in everyday contexts.
 
-**INSERT IMAGE DEVICE + TWIN ON AVAILABITY MODE**
+[![Device demo video](img/simulation.mp4)](media/simulation.mp4)
+
+*Video demonstrating two different modes on the physical device and its digital twin*
 
 
 ---
