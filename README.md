@@ -198,4 +198,4 @@ Andargie, M.S. and Azar, E. (2019) ‘An applied framework to evaluate the impac
 
 Beckers, R., van der Voordt, T. and Dewulf, G. (2016) ‘Learning space preferences of higher education students’, Building and Environment, 104, pp. 243–252. https://doi.org/10.1016/j.buildenv.2016.05.013
 
-Opoku, D.-G.J., Perera, S., Osei-Kyei, R., Rashidi, M., Bamdad, K. and Famakinwa, T. (2023) ‘Digital twin for indoor condition monitoring in living labs: University library case study’, Journal of Building Engineering, 63, 105475. https://doi.org/10.1016/j.jobe.2022.105475
+Opoku, D.-G.J., Perera, S., Osei-Kyei, R., Rashidi, M., Bamdad, K. and Famakinwa, T. (2024) ‘Digital twin for indoor condition monitoring in living labs: University library case study’, Automation in Construction, 157, 105188. https://doi.org/10.1016/j.autcon.2023.105188
