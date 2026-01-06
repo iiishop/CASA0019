@@ -6,13 +6,13 @@ UCL Centre for Advanced Spatial Analysis
 
 ## 1. Introduction & Rationalization
 
-Bookable study spaces play an important role in shaping how students focus, interact, and work together. Their availability and atmosphere directly influence both individual productivity and collaborative learning.
+Bookable study spaces play a key role in shaping how students focus, interact, and collaborate. Their availability and atmosphere directly affect both individual productivity and group work.
 
-At UCL, a web-based reservation system allows students to check the availability of study spaces in advance. While effective for scheduling, this system represents space primarily through box-style time slots and simplified visual layouts. Such representations provide limited insight into the experiential qualities of learning environments. As a result, students often still need to physically visit a space to assess whether it supports their current mode of work. At an operational level, the same representation also makes it difficult to quickly perceive how spaces respond to changing occupancy patterns and room conditions throughout the day.
+At UCL, a web-based reservation system allows students to check availability in advance. While effective for scheduling, it represents space mainly through box-style time slots and simplified visuals, offering little insight into experiential qualities such as comfort or suitability for different modes of work. As a result, students often still need to visit spaces in person to assess their appropriateness, and operationally it remains difficult to perceive how spaces respond to changing occupancy and conditions over time.
 
-Prior research shows that higher education students’ study-space choices are shaped by a combination of environmental comfort and functional needs (e.g., noise, privacy, facilities), supporting the treatment of indoor conditions as a meaningful determinant of space use (Beckers, van der Voordt, & Dewulf, 2016). Indoor environmental conditions have also been shown to significantly influence occupants’ comfort, satisfaction, and performance outcomes; integrated post-occupancy evaluation approaches combining monitored environmental data with subjective responses and objective performance measures have quantified these relationships in operational educational buildings (Andargie & Azar, 2019).
+Prior research shows that students’ study-space choices are shaped by a combination of environmental comfort and functional needs, including noise, privacy, and facilities (Beckers, van der Voordt, & Dewulf, 2016). Indoor environmental conditions have also been shown to significantly influence comfort, satisfaction, and performance, as demonstrated through integrated post-occupancy evaluation approaches combining monitored data with subjective and objective measures (Andargie & Azar, 2019).
 
-This project does not aim to replace the existing system, but to reinterpret its data through visualisation. It investigates how study space availability and room dynamics can be communicated through a combination of physical data visualisation and a digital twin, enabling information to be perceived passively rather than actively interpreted. By expressing data through physical form and visual behaviour, the project frames visualisation as a process of sense-making. This approach supports everyday student decision-making while also offering facilities teams a higher-level understanding of how learning spaces perform over time.
+This project does not replace the existing system, but reinterprets its data through visualisation. By combining physical data visualisation with a digital twin, it explores how availability and room dynamics can be perceived passively rather than actively queried. Through physical form and visual behaviour, the system frames visualisation as sense-making—supporting everyday student decisions while also providing facilities teams with higher-level insight into learning space performance over time.
 
 
 <p align="center">
@@ -192,7 +192,7 @@ This project was developed collaboratively. Gilang Pamungkas led the system conc
 
 ---
 
-## 10. Reference
+Reference
 
 Andargie, M.S. and Azar, E. (2019) ‘An applied framework to evaluate the impact of indoor office environmental factors on occupants’ comfort and working conditions’, Sustainable Cities and Society, 46, 101447. https://doi.org/10.1016/j.scs.2019.101447
 
