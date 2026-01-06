@@ -59,9 +59,12 @@ These indicators are translated into a small set of consistent visual rules shar
 
 The physical data visualisation device is conceived as a passive, ambient interface that communicates the state of study spaces without requiring sustained attention or analytical interaction. Rather than functioning as a dashboard that users must actively query, the device remains present in the environment and supports quick, intuitive readings through form, colour, and movement. This approach is suited to everyday study decisions, where users often need to assess space suitability rapidly rather than interpret detailed data.
 
-<img src="img/enclosure.jpg" alt="Figure 4. Final Physical Device Enclosure" width="300">
+<p align="center">
+  <img src="img/enclosure.jpg" alt="Figure 4. Final Physical Device Enclosure" width="300">
+</p>
 
-<p><em>Figure 4. Final Physical Device Enclosure</em></p>
+<p align="center"><em>Figure 4. Final Physical Device Enclosure</em></p>
+
 
 
 
@@ -75,8 +78,11 @@ The TFT screen plays a complementary role across both modes. In Bookings mode, i
 
 Crucially, the device is designed to be readable without instruction. Colour, spatial position, repetition, movement, and simple physical gestures guide interpretation naturally. By embedding data within physical form and visual behaviour, the device transforms abstract spatial information into an intuitive, ambient presence that supports everyday decision-making in learning environments.
 
-![Figure 5. Wiring Diagram](img/wiring_diagram.jpg)
-*Figure 5. Wiring Diagram*
+<p align="center">
+  <img src="img/wiring_diagram.jpg" alt="Figure 5. Wiring Diagram width="300">
+</p>
+
+<p align="center"><em>Figure 5. Wiring Diagram</em></p>
 
 ---
 
