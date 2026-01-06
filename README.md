@@ -189,4 +189,4 @@ Alongside functional expansion, future iterations would also focus on reducing p
 
 ## 9. Individual Contributions
 
-This project was completed by the team members working together. Gilang Pamungkas is responsible for the development of the program code and communication implementation of the physical device; Yuqian Lin is responsible for the digital twin and AR visualization on the Unity platform; Chaoshuo Han is responsible for the structural Design and 3D modeling of the physical device. Cheng Zhong was in charge of cross-module collaboration and integration, and was involved in the implementation of digital twin related aspects as well as the overall structure planning of the report. The report was jointly written and modified by all the members of the team to ensure consistency between the system and the report.
+This project was developed collaboratively. Gilang Pamungkas led the physical device software and communication; Yuqian Lin developed the digital twin and AR visualisation; Chaoshuo Han designed and modelled the physical enclosure; Cheng Zhong coordinated integration and report structure. The report was jointly written by all team members.
