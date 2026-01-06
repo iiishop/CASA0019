@@ -79,7 +79,7 @@ The TFT screen plays a complementary role across both modes. In Bookings mode, i
 Crucially, the device is designed to be readable without instruction. Colour, spatial position, repetition, movement, and simple physical gestures guide interpretation naturally. By embedding data within physical form and visual behaviour, the device transforms abstract spatial information into an intuitive, ambient presence that supports everyday decision-making in learning environments.
 
 <p align="center">
-  <img src="img/wiring_diagram.jpg" alt="Figure 5. Wiring Diagram" width="600">
+  <img src="img/wiring_diagram.jpg" alt="Figure 5. Wiring Diagram" width="500">
 </p>
 
 <p align="center"><em>Figure 5. Wiring Diagram</em></p>
@@ -90,9 +90,11 @@ Crucially, the device is designed to be readable without instruction. Colour, sp
 
 The digital twin extends the physical data visualisation device into a complementary digital medium, not to replace it, but to support different forms of interpretation and use. While the physical device is designed for peripheral, glance-based awareness in real space, the digital twin enables closer inspection and comparative understanding without altering the underlying data or logic of the system.
 
-A screen shot of a device
+<p align="center">
+  <img src="img/digital_twin.jpg" alt="Figure 6. Final Digital Twin" width="300">
+</p>
 
-Description automatically generated
+<p align="center"><em>Figure 4. Final Digital Twin</em></p>
 
 Both the physical device and the digital twin subscribe to the same MQTT topics and operate on identical data streams. This ensures full consistency across media: colour mappings, modes, and temporal behaviours are preserved rather than reinterpreted. Availability is visualised using the same red–green logic, while environmental conditions are represented through the same four attributes—occupancy, noise, temperature, and light—each mapped to a consistent colour identity. The digital twin therefore functions as a direct extension of the physical language, rather than a separate interface.
 
