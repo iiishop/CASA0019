@@ -32,17 +32,24 @@ These indicators are translated into a small set of consistent visual rules shar
     <td align="center">
       <img src="img/json_availability.png"
            alt="Figure 2. Sample JSON Output of Availability Data"
-           width="100"><br>
-      <em>Figure 2. Sample JSON Output of Availability Data</em>
+           width="100">
     </td>
     <td align="center">
       <img src="img/json_comfort.png"
            alt="Figure 3. Sample JSON Output of Comfort Data"
-           width="300"><br>
+           width="300">
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <em>Figure 2. Sample JSON Output of Availability Data</em>
+    </td>
+    <td align="center">
       <em>Figure 3. Sample JSON Output of Comfort Data</em>
     </td>
   </tr>
 </table>
+
 
 
 
