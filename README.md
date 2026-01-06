@@ -132,7 +132,7 @@ A key visual iteration concerned how room conditions were summarised. Rather tha
 Another challenge involved representing multiple comfort attributes with different units and scales. Early ideas to place all scales directly on the device were rejected, as this quickly crowded the surface and conflicted with the ambient nature of the display. Instead, scale definitions and mappings were externalised into an online guideline booklet, maintaining visual simplicity on the device itself. While alternative solutions—such as printing legends directly onto the device—were considered, a fully satisfactory integration was not finalised within the project timeframe.
 
 <p align="center">
-  <img src="img/booklet_guide.png" alt="Figure 8. Scale Description on Online Guideline Booklet" width="300">
+  <img src="img/booklet_guide.png" alt="Figure 8. Scale Description on Online Guideline Booklet" width="200">
 </p>
 
 <p align="center"><em>Figure 8. Scale Description on Online Guideline Booklet</em></p>
@@ -167,10 +167,10 @@ Another reflection concerns visual comfort. The NeoPixel LEDs provide strong con
 A key future extension is to move beyond observing availability toward enabling booking directly through the system. This would transform the device from a passive visualisation into an actionable interface while preserving its ambient character.
 
 <p align="center">
-  <img src="img/booking_feature.png" alt="Figure 9. Existing Booking Feature" width="300">
+  <img src="img/booking_feature.png" alt="Figure 10. Existing Booking Feature" width="800">
 </p>
 
-<p align="center"><em>Figure 9. Exising Booking Feature</em></p>
+<p align="center"><em>Figure 10. Exising Booking Feature</em></p>
 
 The following outlines the proposed step-by-step workflow:
 
