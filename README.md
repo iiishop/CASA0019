@@ -12,8 +12,11 @@ At UCL, a web-based reservation system allows students to check the availability
 
 This project does not aim to replace the existing system, but to reinterpret its data through visualisation. It investigates how study space availability and room dynamics can be communicated through a combination of physical data visualisation and a digital twin, enabling information to be perceived passively rather than actively interpreted. By expressing data through physical form and visual behaviour, the project frames visualisation as a process of sense-making. This approach supports everyday student decision-making while also offering facilities teams a higher-level understanding of how learning spaces perform over time.
 
-![Figure 1. Bookable Study Space in UCL East Library (Study Pod & Meeting Room)](img/floor_plan_library.png)
-*Figure 1. Bookable Study Space in UCL East Library (Study Pod & Meeting Room)*
+<p align="center">
+  <img src="img/booking_feature.png" alt="Figure 1. Existing Bookable Study Space System" width="800">
+</p>
+
+<p align="center"><em>Figure 1. Existing Bookable Study Space System</em></p>
 
 ---
 
@@ -153,11 +156,8 @@ Another reflection concerns visual comfort. The NeoPixel LEDs provide strong con
 
 A key future extension is to move beyond observing availability toward enabling booking directly through the system. This would transform the device from a passive visualisation into an actionable interface while preserving its ambient character.
 
-<p align="center">
-  <img src="img/booking_feature.png" alt="Figure 10. Existing Booking Feature" width="800">
-</p>
-
-<p align="center"><em>Figure 10. Exising Booking Feature</em></p>
+![Figure 10. Bookable Study Space in UCL East Library (Study Pod & Meeting Room)](img/floor_plan_library.png)
+*Figure 10. Bookable Study Space in UCL East Library (Study Pod & Meeting Room)*
 
 The following outlines the proposed step-by-step workflow:
 
