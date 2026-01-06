@@ -59,8 +59,10 @@ These indicators are translated into a small set of consistent visual rules shar
 
 The physical data visualisation device is conceived as a passive, ambient interface that communicates the state of study spaces without requiring sustained attention or analytical interaction. Rather than functioning as a dashboard that users must actively query, the device remains present in the environment and supports quick, intuitive readings through form, colour, and movement. This approach is suited to everyday study decisions, where users often need to assess space suitability rapidly rather than interpret detailed data.
 
-![Figure 4. Final Physical Device Enclosure](img/enclosure.jpg)
-*Figure 4. Final Physical Device Enclosure*
+<img src="img/enclosure.jpg" alt="Figure 4. Final Physical Device Enclosure" width="300">
+
+<p><em>Figure 4. Final Physical Device Enclosure</em></p>
+
 
 
 The device adopts a tabletop form factor with a circular geometry, inspired by the metaphor of a round conference table commonly associated with collaborative learning environments. The enclosure and structural components were designed using Fusion 360 and fabricated through 3D printing, allowing the physical form to align closely with the system’s data logic and interaction design. The device presents one study space at a time, with users navigating between spaces by rotating a rotary encoder and switching between modes by pressing the encoder. This simple, embodied interaction model reduces visual clutter and supports calm, sequential exploration rather than parallel comparison.
@@ -73,7 +75,7 @@ The TFT screen plays a complementary role across both modes. In Bookings mode, i
 
 Crucially, the device is designed to be readable without instruction. Colour, spatial position, repetition, movement, and simple physical gestures guide interpretation naturally. By embedding data within physical form and visual behaviour, the device transforms abstract spatial information into an intuitive, ambient presence that supports everyday decision-making in learning environments.
 
-![Figure 5. Wiring Diagram](img/study_space_wiring_bb.jpg)
+![Figure 5. Wiring Diagram](img/wiring_diagram.jpg)
 *Figure 5. Wiring Diagram*
 
 ---
