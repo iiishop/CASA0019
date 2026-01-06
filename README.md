@@ -79,7 +79,7 @@ The TFT screen plays a complementary role across both modes. In Bookings mode, i
 Crucially, the device is designed to be readable without instruction. Colour, spatial position, repetition, movement, and simple physical gestures guide interpretation naturally. By embedding data within physical form and visual behaviour, the device transforms abstract spatial information into an intuitive, ambient presence that supports everyday decision-making in learning environments.
 
 <p align="center">
-  <img src="img/wiring_diagram.jpg" alt="Figure 5. Wiring Diagram" width="100">
+  <img src="img/wiring_diagram.jpg" alt="Figure 5. Wiring Diagram" width="300">
 </p>
 
 <p align="center"><em>Figure 5. Wiring Diagram</em></p>
