@@ -110,8 +110,6 @@ A core design principle of this project is the maintenance of a shared visual la
 
 Both systems apply identical visual rules: colour distinguishes attributes such as occupancy, noise, temperature, and lighting, while quantity and radial extent represent relative intensity. Temporal behaviours, including gradual filling and rhythmic transitions, are used consistently to communicate change over time. By transforming data once conceptually and applying it across media, the system supports continuity of interpretation while allowing each interface to emphasise its respective strengths—ambient awareness in the physical device and persistence and comparison in the digital twin.
 
-**INSERT IMAGE DEVICE + TWIN ON COMFORT MODE**
-
 
 ---
 
@@ -124,10 +122,10 @@ A key visual iteration concerned how room conditions were summarised. Rather tha
 Another challenge involved representing multiple comfort attributes with different units and scales. Early ideas to place all scales directly on the device were rejected, as this quickly crowded the surface and conflicted with the ambient nature of the display. Instead, scale definitions and mappings were externalised into an online guideline booklet, maintaining visual simplicity on the device itself. While alternative solutions—such as printing legends directly onto the device—were considered, a fully satisfactory integration was not finalised within the project timeframe.
 
 <p align="center">
-  <img src="img/booklet_guide.png" alt="Figure 8. Scale Description on Online Guideline Booklet" width="200">
+  <img src="img/booklet_guide.png" alt="Figure 7. Scale Description on Online Guideline Booklet" width="200">
 </p>
 
-<p align="center"><em>Figure 8. Scale Description on Online Guideline Booklet</em></p>
+<p align="center"><em>Figure 7. Scale Description on Online Guideline Booklet</em></p>
 
 Material choices were also iterated. Although a wooden or laser-cut tabletop form was initially envisioned, time constraints led to a 3D-printed enclosure, refined through technical guidance to improve legibility and tactility. Together, these iterations reflect a balance between expressiveness, legibility, and practical stability.
 
@@ -145,7 +143,7 @@ Overall, the system prioritises perceptual coherence over analytical precision. 
 
 [![Device demo video](img/simulation.mp4)](media/simulation.mp4)
 
-*Video demonstrating two different modes on the physical device and its digital twin*
+*Figure 8. Video demonstrating two different modes on the physical device and its digital twin*
 
 
 ---
@@ -158,8 +156,8 @@ Another reflection concerns visual comfort. The NeoPixel LEDs provide strong con
 
 A key future extension is to move beyond observing availability toward enabling booking directly through the system. This would transform the device from a passive visualisation into an actionable interface while preserving its ambient character.
 
-![Figure 10. Bookable Study Space in UCL East Library (Study Pod & Meeting Room)](img/floor_plan_library.png)
-*Figure 10. Bookable Study Space in UCL East Library (Study Pod & Meeting Room)*
+![Figure 9. Bookable Study Space in UCL East Library (Study Pod & Meeting Room)](img/floor_plan_library.png)
+*Figure 9. Bookable Study Space in UCL East Library (Study Pod & Meeting Room)*
 
 The following outlines the proposed step-by-step workflow:
 
