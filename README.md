@@ -12,8 +12,8 @@ At UCL, a web-based reservation system allows students to check the availability
 
 This project does not aim to replace the existing system, but to reinterpret its data through visualisation. It investigates how study space availability and room dynamics can be communicated through a combination of physical data visualisation and a digital twin, enabling information to be perceived passively rather than actively interpreted. By expressing data through physical form and visual behaviour, the project frames visualisation as a process of sense-making rather than optimisation. This approach supports everyday student decision-making while also offering facilities teams a higher-level understanding of how learning spaces perform over time.
 
-![Bookable Study Space in UCL East Library (Study Pod & Meeting Room)](img/floor_plan_library.png)
-
+![Figure 1. Bookable Study Space in UCL East Library (Study Pod & Meeting Room)](img/floor_plan_library.png)
+*Figure 1. Bookable Study Space in UCL East Library (Study Pod & Meeting Room*
 
 ---
 
