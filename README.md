@@ -13,7 +13,7 @@ At UCL, a web-based reservation system allows students to check the availability
 This project does not aim to replace the existing system, but to reinterpret its data through visualisation. It investigates how study space availability and room dynamics can be communicated through a combination of physical data visualisation and a digital twin, enabling information to be perceived passively rather than actively interpreted. By expressing data through physical form and visual behaviour, the project frames visualisation as a process of sense-making rather than optimisation. This approach supports everyday student decision-making while also offering facilities teams a higher-level understanding of how learning spaces perform over time.
 
 ![Figure 1. Bookable Study Space in UCL East Library (Study Pod & Meeting Room)](img/floor_plan_library.png)
-*Figure 1. Bookable Study Space in UCL East Library (Study Pod & Meeting Room*
+*Figure 1. Bookable Study Space in UCL East Library (Study Pod & Meeting Room)*
 
 ---
 
@@ -23,9 +23,12 @@ The aim of this project is not to present raw metrics, but to translate key spat
 
 Availability is taken from the booking API and converted into a 30-minute free/booked timeline for each study space across the day (09:00–21:00), updated at regular intervals. This representation supports quick comparison of when a space is likely to be usable, without requiring users to read or interpret detailed schedules or time-slot tables.
 
-To represent comfort and room dynamics, the project focuses on four indicators: occupancy percentage, noise, lighting, and temperature. In the current prototype, these values are synthetically generated within plausible ranges and treated as relative perceptual signals rather than precise measurements. Occupancy percentage represents perceived crowding, while noise functions as a behavioural proxy that increases with occupancy and occasional disruption. Lighting and temperature represent environmental comfort conditions that shape how a space feels over time. The logic used to generate and update these indicators is implemented in a Python-based simulation module, which is publicly available as part of the project repository (see study_space_simulator.py on GitHub).
+To represent comfort and room dynamics, the project focuses on four indicators: occupancy percentage, noise, lighting, and temperature. In the current prototype, these values are synthetically generated within plausible ranges and treated as relative perceptual signals rather than precise measurements. Occupancy percentage represents perceived crowding, while noise functions as a behavioural proxy that increases with occupancy and occasional disruption. Lighting and temperature represent environmental comfort conditions that shape how a space feels over time. The logic used to generate and update these indicators is implemented in a Python-based simulation module, which is publicly available as part of the project repository (see study_space_simulator.py).
 
 These indicators are translated into a small set of consistent visual rules shared across the physical device and the digital twin. In Bookings mode, the NeoPixel ring operates as a 24-slot timeline, where green represents free, and red represents booked. In Condition mode, the ring shifts to an animated attribute display: the system cycles through occupancy, noise, temperature, and light every five seconds, where colour identifies the active attribute and the number of illuminated LEDs encodes its magnitude. Here, visual behaviour refers to the temporal logic of attribute rotation and progressive fill, allowing meaning to emerge through change over time rather than through labels or numerical values. By applying the same mapping logic across media, the project establishes a coherent visual language for understanding availability and room dynamics at a glance.
+
+![Figure 2. Sample JSON Output of Availabity Data)](img/json_availability.png)
+*Figure 2. Sample JSON Output of Availabity Data*
 
 ---
 
